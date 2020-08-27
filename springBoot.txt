@@ -1,0 +1,142 @@
+1、特点
+可以以jar包的形式独立运行
+内置tomcat jetty、undertow
+提供一系列start组件
+
+
+springBoot_Demo1
+父工程
+
+2.启动自动配置
+3.自定义banner
+4.全局配置参数
+5.start pom
+6.获取自定义配置的值
+@Value
+7.类型安全的配置
+@ConfigurationProperties(prefix = "book") //基于类型安全的取值
+application.properties
+get set 方法
+8.profile配置
+application-prod.properties 
+application-sit.properties
+application-dev.properties
+
+通过
+application.properties  
+spring.profiles.active=dev
+9.自动配置原理
+读取spring-meta配置文件
+
+10.创建父工程
+子工程
+
+11.springBoot整合测试
+@SpringBootTest(classes = SpringBootController.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+public class SpringBootControllerTest {
+
+    @Autowired
+    private SpringBootController springBootController;
+
+    @Test
+    public void test01(){
+        TestCase.assertEquals(this.springBootController.yes(),"hello");
+    }
+}
+
+12、@springbootAplication 和 restController
+启动类 restcontroller rest风格
+
+13、springboot日志管理
+日志级别 7个
+trace debug info warn error fatal off
+2中设置方式
+logging.flie
+logging.path
+只能设置其中一种，如果2者都使用了，则只有logging.file生效
+14、自定义配置文件
+官方推荐使用-spring的文件名作为日志配制
+
+
+15.logger使用
+
+16.多环境日志输出
+
+17.LOG4J使用
+
+18、自动部署
+
+19、springboot web开发
+web包自动配置代码查看   autoConfiguration包下面查看
+
+20.访问静态资源
+
+21.自定义消息转化器
+
+22.使用Fastjson解析json
+
+配置F
+配置Fastjson2中使用方式
+启动类继承 WebMvcConfigurerAdapter
+重写 configureMessageConverters 方法
+第二种方式@Bean
+
+23.自定义拦截器
+继承 WebMvcConfigurerAdapter
+
+24.定义全局异常处理器
+
+25.异步调用
+在项目中，当访问其他接口较慢或耗时任务时，不想程序一直卡在耗时任务上，可以使用多线程处理任务
+springboot提供了异步处理的功能
+
+26.在springBoot中使用jsp
+官方不推荐使用jsp
+
+27、springboot整合freemarker 
+推荐使用模板引擎
+
+28、springboot 整合thymeleaf
+
+29、springboot 整合quartz
+30、springboot 整合jdbcTemplates
+31、springboot 整合mybatis
+32、springboot 整合mybatis 注解
+
+33、区分多数据源
+如何区分多个数据源：
+通过包来区分：com.db1.mapper com.db2.mapper
+使用注解来区分
+
+34、多数据源实现  --看了，未实操
+通过读取配置文件、创建不同的包，在mapper注入不同的数据源，创建datasource
+通过读取配置文件、创建不同的包，在mapper注入不同的数据源，创建datasource
+
+
+35、事物管理
+servcie 类中加  @Transactional
+或者 方法中加  @Transactional
+
+
+36、spring整合 hibernate jpa  --未看
+37、spring整合 mail  --未看
+
+38、spirngboot实现文件上床
+39、springbot 实现文件批量上传
+
+40、springboot整合neo4j nosql图形数据库 --未看
+41、打包发布到独立的tomcat
+1、需要打成war包
+2、不需要把starter-tomcat 打包包中
+使用<scope>provided</scope>
+3、启动类继承SpringBootServletInitial
+继承SpringApplicationBuilder
+
+
+42、springboot整合redis
+
+43、springboot整合redis集群
+
+配置JedisCluster对象 Configura

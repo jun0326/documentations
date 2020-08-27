@@ -1,0 +1,535 @@
+1、集合概述
+	集合就是一个容器，集合可以装很多数据
+	Collection(根类)
+2、为什么会有集合
+	1、数组有个问题是长度固定的
+	2、集合的长度是自动扩容的
+	3、stringBuffer和StringBuilder只能存字符串
+3、集合和数组的区别
+	1、集合长度可变、数组长度固定
+	2、数组只能存储同一类型的数据，集合可以存储不同类型的数据
+	3、数据既可以存储基本类型的数据，也可以存储引用类型的数据，集合只能存储引用类型的数据
+4、集合的继承体系
+	collection
+		List 有序的，允许重复
+			ArrayList
+			Vector
+			LinkedList
+		Set 无序的，不允许重复
+			HashSet
+				LinkedHashSet
+			TreeSet
+5、Collection概述及成员方法概述
+	boolean add(E e) 添加一个元素 ，如果没有报异常，永远都是返回true
+	boolean remove(Object o)
+	void clear()
+	boolean contains(Object o)
+	boolean isEmpty()
+	int size()
+	arrayList重写了toString方法
+	boolean addAll(Collection c)； 添加一整个集合
+	boolean removeAll(Collection c)； 删除一整个集合，有元素被删除，则返回true
+	boolean containsAll(Collection c); 判断是否包含一整个集合,所有元素都包含才返回true
+	boolean retainAll(Collection c); 求两个集合交集,如果第一个集合的元素发生了变化，则返回true,如果没有发生变化则返回false
+6、集合的遍历
+	迭代功能
+		Iterator<E> iterator(); 不同的集合会返回不同的集合迭代器对象
+			Iterator的方法
+				hasNext();判断是否还有下一个元素，返回值是boolean类型
+				next(); 移动迭代器游标，并放回指向的对象
+	把集合转换为数组
+		Object[] toArray()
+7、Iterator源码分析
+	迭代器对象是当前集合的内部类对象，并实现了Iterator
+	为什么要把迭代器定义为内部类，而不定义成外部类
+		因为每一个种类的集合的数据结构是不一样的，所以遍历过程也是不一样的，
+		要根据当前集合的情况定义一个迭代器类，而不能定义一个通用的迭代器类。
+		所有迭代器都实现了Iterator
+	迭代器对象使用注意事项
+	每next()方法都会往后移动一位
+8、List集合
+	有序的（存入顺序和取出顺序一致）
+	可重复的
+	1、List集合方法
+		添加功能
+			void add(int index,Element e);  在该集合最后一个位置添加是允许的，超过最后一个会报指标越界异常
+		获取功能
+			Object get(int index);
+		删除功能
+			Object remove(int index); list删除返回值是被删除的对象
+			Collection的删除方法，删除找到的第一个元素，返回值是true
+		修改功能
+			Object set(int index,Element e);
+			
+		int indextOf(Object o); 没有则返回-1
+		int lastIndexOf(Object o); 没有则返回-1
+		boolean remove(Object,o);
+		List<E> subList(int fromIndex,int toIndex);前面参数包括，后面参数不包括，截取之后原集合没有发生改变
+		
+		List集合独有的变量方式
+		1、get()和size()方法配合
+		2、ListIterator
+			使用ListIterator反方向遍历
+			ListIterator.hasPrevios(); 判断是否还有前一个方法
+			ListIterator.previous();返回当前对象，并向前移动游标
+			ListIterator使用注意事项
+				要想倒着遍历，必须要正着遍历
+		List并发修改异常出现的原因  
+		concurrentModificationException,并发修改异常
+		原因：获得了list集合的迭代器，迭代器依赖集合存在，
+		但是在遍历集合的过程中，对集合进行修改，修改之后迭代器又不知道，但是
+		依旧用原来的迭代器进行遍历，所以报错了
+		解决方案
+		1、使用集合自身的方法遍历，用集合自身的方法进行添加（get和size add）
+		add方法添加到集合的末尾
+		2、用集合listTerator集合迭代器进行迭代，用集合迭代器进行添加
+		listTerator.add(); 在本次迭代元素之后添加，并不是在尾部添加
+		
+9、List的实现类区别
+	1、数据结构的区别
+		常见的线性数据结构：
+		栈：先进来，后出去 pop(); 弹栈 push();压栈 peek(); 查看栈顶数据
+		队列：先进先出
+		数组：长度固定，每一个元素都有下标，在内存中是一块连续的内存空间。
+		数组的每个元素都有下标，所以查找起来就很快。
+		数组的长度是固定的，要往里面添加元素是很困难的，因为要创建新的数组。
+		总结：查询块，增删慢。
+		案例：
+		int i = {1,2,3,4,5}
+		需求：往数组的3元素后添加一个元素6，应该怎么操作。
+		思路：需要创建一个新的数组，支持新增的元素
+		链表：由一个个节点组成，每个节点由两部分组成，地址域、值域，
+				链表在内存中的存储形式是不连续的。
+			单向链表
+			循环链表
+			双向链表
+			案例：
+			需求往节点中添加一个元素
+			案例：
+			查找一个节点
+			案例：
+			删除一个节点
+			总结：增删块，查找慢
+			
+	2、线程安全的区别
+		ArrayList和LinkedList是线程不安全的（效率高）
+		Vector是线程不安全（效率低）
+	3、应用场景
+	ArrayList(数组)
+	Vector(数组，线程安全)：就算有线程安全的需求也不用Vector，有方法能
+	让ArrayList和LinkedList变成线程安全的。
+	LinkedList(链表)
+	
+	查询比较多ArrayList,增删比较多就用LinkedList,如果不知道就用ArrayList
+	修改是和查询挂钩的
+	
+	4、Vector独有的方法
+		1、添加功能
+		void addElement(Object obj);
+		2、获取功能
+		Object elementAt(int index);
+		Enumeration elements();
+		boolean hasMoreElements();
+		Object nextElement();
+	5、LinkedList独有的方法
+		添加功能：
+		void addFirst(Object obj);
+		void addLast(Object obj);
+		获取功能：
+		Object getFirst();
+		Object getLast();
+		删除功能
+		Object removeFirst();
+		Object removeLast();
+		
+	6、用LinkedList实现栈
+	7、用LinkedList实现队列
+	案例：去除List集合中重复的字符串
+	思路1：
+	1、创建第二个集合
+	2、遍历第一个集合中的元素
+	3、判断第二个集合的元素是否包含遍历的元素，用contains(Object obj);方法。
+	如果有就不用放到第二个集合，如果没有就放到第二个集合。
+	
+	思路2：
+	选择排序（拿集合中的某个元素和他后面的所有的元素进行比较）
+	
+10、泛型
+	1、泛型概念（JDK1.5推出的新特性）
+	Generic
+	对类型进行限定的（对集合中的类型进行限定），他可以把类型当做参数传递。
+	2、泛型的由来 ClassCastException
+	由于集合在添加元素的时候可以添加任意类型引用的对象，但是遍历的时候就因为类型不统一，很容易出错。
+	所以java公司就想用限制集合类型的方式来避免差错，这种限制集合类型的机制就加泛型
+	
+	范型实际上根据数组发展而来的，数组是类型集中的
+	
+	3、泛型的应用
+	使用泛型的好处
+	1、避免程序运行时，由于集合内部元素数据类型不一致导致报错
+	2、遍历的时候不需要类型转化。
+	3、可以消除由于没有添加泛型导致程序出现警告
+	
+	泛型的官方概念：
+		是一种把类型明确工作推迟到对象的创建或方法调用时候的特殊类型
+		类型参数化 泛型可以把类型当作参数来传递
+		
+    4、自定义类型对象集合去重，
+	使用contains(Object obj); 方法时，依赖的是equals方法，自定义对象需要重写equals()方法
+	
+	5、泛型应用场景
+		接口、类、抽象类、方法中都使用泛型
+	
+		1、定义泛型类
+		向上转型为Object是不会报错的
+		如果向下转型就容易出错。
+		因为有向下转型出错的原因就有泛型的出现,
+		加了泛型之后就避免向下转型出错了
+		
+		public class MyCollection<E>{
+			private E obj;
+			
+			public void add(E obj){
+				this.obj = obj;
+			}
+			
+			public E get(){
+				return obj;
+			}
+		} 
+		
+		2、定义泛型方法
+		定义泛型方法定义在返回值前面
+		把数据类型确定推迟到方法调用时确定
+		public class GenericMethod<T,V>{
+			public <T,V> void mehtod(T t,V v){
+				system.out.println(t);
+				system.out.println(t);
+			}
+		}
+		
+		应用场景：
+		方法重载上可以使用泛型实现，方法调用时再确定数据类型
+		不能把明确的类型数据赋值给泛型局部变量和全局变量
+		
+		3、定义泛型接口
+			泛型接口的定义和泛型类的定义是一样的
+			public interface Inter<T,V>{
+				public abstract void show(T t);
+			}
+		
+			泛型接口的使用，2种实现方式
+			1、第一中方式，未指明泛型的真实类型
+			public class InterImpl<T,V> implements Inter<T,V>{
+			}
+			
+			2、第二中方式，指定泛型的类型
+			public class InterImpl implements Inter<String,String>{
+			}
+		4、泛型通配符 
+			种类
+			1、无边际通配符 <?>
+			2、向下界定通配符 <? extends A类型>: 是A类的本身或者子类对象
+			3、向上界定通配符 <? super A类型>: 是A类的本身或者父类对象
+		
+			为什么有泛型通配符
+				集合泛型不支持多态的方式
+				1、通配符是以左边为主，右边写了起的是不起作用的
+				2、泛型通配符可以解决集合支持多态处理
+			向下通配符
+			向上通配符
+		5、泛型高级知识
+			1、泛型如果是具体的类型，左右两边必须一样
+			2、如果左边是通配符，右边符合泛型通配符的规则即可
+			3、如果集合左边是定义了通配符的对象，任何值都不能添加集合，此时此刻只有null值才能放进去
+			4、对于上面定义的泛型通配符的集合，是不能修改里面的元素，只能添加null
+			但是可以遍历，遍历的时候得到的返回值全部都是Object类型
+11、增强for(jdk1.5新特性)
+	1、增强forz注意事项
+		增强for其实是使用了迭代器，list.ierator() = null,会报空指针异常
+		
+12、静态导入(jdk1.5新特性)
+	import static java.lang.Math.*;
+	
+13、可变长参数(jdk1.5新特性)
+	public static int sum(int... args){//可变参相当一个数组参数
+		
+	}
+	
+	注意事项
+	1、如果方法的形参有可变形参也有其他形参，可变形参只能放在最后
+	
+	
+14、把数组转集合
+	1、集合转成数组，使用list.toArray(Object[] obj) 方法。
+	2、把数组转成集合，可以使用Arrays工具类中的asList方法来实现的。
+	3、如果传入的参数一致，则返回该类型的方法，如果不一致，则返回Object类型。
+	
+15、生成随机数的工具
+	A、Math.random(); 0.0-1
+	B、Random nextInt(int num); 0 - num
+16、集合最大值
+	1、集合转数组
+	2、数组排序
+	3、最大索引就是最大值
+17、Set集合概述
+	Set(无序的，不允许元素重复)
+	HashSet
+		LinkedHashSet
+	TreeSet
+	
+	最多允许一个null
+	
+	1、添加元素
+	Set添加元素和迭代的顺序是不一致的，但是，set集合存储元素的时候，会有一定的规则，如果添加的顺序是按照它的规则来添加，
+	则迭代时的顺序和添加一致
+	2、set集合是如何去重的？
+		根据推断，可以怀疑Set集合去重是依赖equals方法的
+		需求：往Set集合中添加自定义对象，并且重写学生类的equals方法
+		通过实例，自定义对象虽然重写了equals方法，但是相同的自定义对象还是存入Set集合
+		可以判断Set集合不是通过equals去重
+	3、Set集合去重的原理
+		HashSet集合是如何去重的？
+			依赖自身的数据结构去重的，它自身的数据结构是哈希表、散列值
+		哈希表：是数组+链表的组合
+	4、HashSet如何运用哈希表去重？
+	   HashSet如何判断两个元素是相同的？
+		当把一个对象添加到HashSet集合中去的时候，
+			1、得到对象的hashCode值，拿这个值和HashSet集合中的所有的元素进行比较
+			如果hashCode值不一样，他就认为两个对象是不同的，就可以把这个对象添加到集合中。
+			2、如果hahsCode和集合中某个对象的hashCode值一样，这个时候不能直接判断该对象就和集合中
+			的某一个元素一致了，还要接着判断：
+			接着判断该对象的地址值和调用该对象的equals方法，只要二者有一个判断是true就认为该
+			对象和集合中的对象是有重复就不添加
+			
+			如何判断两个对象是否相同
+			e1，e2
+			e1:是我们要添加的元素
+			e2:是集合中的某个元素
+			（e1.hashCode == e2.hashCode）&& (e1==e2 || e1.equals(e2))
+			
+			哈希表中数组存储的是hashcode，数组中的每个hashcode值是不一样的
+			数组中每个hashcode下挂的链表结构的hashcode一样，如果hashcode一样下的链表中
+			的节点都是地址值和equals方法都不一致的。
+			
+	 5、重写HashCode方法
+		是根据对象内存地址转换成一个整数来实现
+		
+		重写HashCode方法
+			如果是一个自定义对象，他的hashCode值应该和它的属性相关。
+			hashCode = int (基本数值类型) + 引用类型对象.hashCode();
+18、LinkedHashSet概述
+	具有可预知迭代顺序的Set接口的哈希表和链表实现，维护了一个运行于所有条目的双重
+	链接列表，此链表定义了迭代顺序，即按照将元素插入到set中的顺序（插入顺序）进行迭代
+	数据结构：哈希表+链表
+		哈希表保证元素的唯一性
+		链表保证元素的可迭代性（有序）
+19、TreeSet概述
+	有一个特殊功能可以排序
+	提供2种排序方式
+		1、自然顺序进行排序
+		2、set提供的Comparator进行排序
+		
+	元素唯一
+	可以排序
+	排序的方式（提供不同的构造器）
+		1、自然排序（元素具有比较性）
+		2、比较器排序（依赖比较器进行排序）
+		Comparable<T> 
+		此接口强行对实现它的每个类的对象进行整体排序。这种排序被称为类的自然排序，
+		类的compareTo方法被称为它的自然比较方法。
+		int compareTo(T o) 比较此对象与指定对象的顺序。
+		只有实现了该接口的对象才算具有自然排序的特性。
+		
+		对象是如何通过Comparable接口的comparaTo(T) 方法进行排序的
+		
+		compare(int i，int outoInt);
+		
+		让自定义对象具有可比较性
+		1、实现Comparable接口
+		2、重写compareTo方法
+		
+		
+	如何让用TreeSet集合的比较器进行比较排序
+	1、创建比较器对象（实现了Comparator接口的对象）
+	2、使用带有比较器的TreeSet的构造方法创建集合
+		TreeSet(Comparator<? super E> comparator)
+			构造一个新的空TreeSet,它根据指定比较器进行排序
+		Comparator接口为那些没有自然顺序的对象collection 提供排序。
+		
+	TreeSet集合的数据结构
+		特点：
+			1、唯一
+			2、排序
+		数据结构：红黑树，是二叉树中的一种，它是自平衡的二叉树
+		
+		红黑树如何对插入的元素进行排序
+		TreeSet集合是如何存储添加的元素，并对其进行排序的
+		1、当添加第一个元素进TreeSet集合中的时候，把这个元素作为根节点
+		2、当后面再有元素插入进来的时候，就会和节点元素进行比较，
+			大的放右边
+			小的放左变
+			一样就不添加（去重）
+		如何排序呢？
+			按照一种特殊的遍历树的方式进行遍历，得到的结果就是有序的
+				通常有三种遍历方式：
+					1、前序遍历
+					2、中序遍历
+					3、后序遍历
+					那么按照谦虚遍历的方式对二叉
+					树进行遍历就可以了
+					前序遍历：左、中、右方式遍历
+					
+					
+	练习：按照总分比较时，如果总分出现一样时，比较器认为是同一个学生
+	比较器要每个元素都比较才能比较出来
+	
+	3、使用局部内部类实现比较器对象的创建
+
+20、Map集合概述
+	1、Map集合和Collection集合的区别
+		1、Collection是单链集合，Map集合是双链集合
+		为什么需要Map集合
+		为了提高查找效率
+			key作为索引，value作为值
+	2、Map集合的体系
+	HashMap
+	TreeMap
+		LinkedHashMap
+	Map集合的子类的数据结果都只针对键
+	
+	Map集合的特性：
+		key：键是不能重复的！！！认为key是一个set集合中的一个元素
+		value:值是可以重复的！！！ 认为value是一个list集合中的一个元素
+		键和值是一一对应的
+		
+	3、Map集合中的api
+		1、添加功能
+		V put(K key,V value); 如果是第一次往map中添加键值对，则返回null,如果是第二次添加该key，则修改value,被修改的值返回
+		2、删除功能
+		void clear();
+		V remove(T key); 
+		3、判断功能
+		 boolean containsKey(T key);
+		 boolean containsValue(V value);
+		 boolean isEmpty();  判断集合是否为空
+		4、获取功能
+		 V get(Object obj); 根据键获取
+		  <K> keySet(); 获取集合中所有键的集合
+		 Collection<V> values(); 获取集合中所有值的集合
+		 
+		 map集合的遍历方式：
+		 方式一：
+		 Set<Map.Entry<K,V>> entrySet(); 获取集合中所有键的集合  
+		 Entry是Map内部接口
+		 Entry getKey(); getValue();
+		 方式二：
+		 1、获取map集合的所有key
+		 2、遍历key获取所有的value
+		 
+		5、长度功能
+		int size();
+	4、LinkedHashMap
+		是hashMap的子类
+		数据结构：链表+哈希表
+		链表：保证数据是有序的，添加顺序和迭代顺序一致
+		哈希表：保证键是唯一的，不重复的
+	5、TreeMap
+		数据结构：红黑树
+		特点：可以排序
+		排序的方式：
+			1、自然排序（元素具有比较性）
+			2、比较器排序
+		自然排序的对象必须要实现comparable接口，对应的构造方法是空的构造方法
+		比较器排序的不用实现comparable接口，需要用到Comparator<? super E>参数的构造方法
+		
+		当元素具有比较器，同时TreeMap集合又使用了comparable，则以比较器为主
+		
+	6、案例
+	获取一个字符串每一个字母出现的次数
+	思路分析：
+		1、创建键盘录入对象
+		2、键盘录入字符串
+		3、把字符串转换成字符数组  toCharArray();
+		4、怎么统计？
+			思路：
+			Integer num = map.get('a');
+			if（num == null）{
+				map.put('a',1);
+			} else {
+				num++;
+				map('a',num);
+			}
+		5、把map集合中的字符串拼接成StringBuilder
+		
+	7、Hashtable
+		和HashMap功能一样，现在Hashtable被HashMap替代了
+		Hashtable中的table并没有大写！它是早期的一个是为失误
+		
+		特点：
+			1、键和值都不能是null（hashMap的键和值可以是null）
+			2、Hashtable是线程安全的（HashMap是线程不安全的）
+21、Collections工具类
+	都是静态方法，查找、排序等方法
+	
+	void sort(List<T> list); 排序
+	List集合中的元素必须自身具有比较性，也就是实现了comparable接口，
+	排序的原理是红黑树，但是不会去重，因为list集合支持重复
+	void sort(List<T> list,Comparator<? super E> comparator ); 支持比较器
+	<T> int binarySearch(List<?> list,T key); 二分查找
+	条件：
+		1、集合中的元素必须要有比较性
+		2、集合必须是有序的
+	如果找到元素索引，没有找到就返回负数
+	
+	<T> T max(Collection<?> coll); 最大值
+	1、元素必须要有比较性
+	2、不需要排序
+	void reverse(List<T> list);反转
+	void shuffle(List<?> list);随机置换
+22、集合总结
+	Collection: 单列集合
+		List:有序、可以重复
+			--ArrayList(数组：查找快、增删慢)
+			--LinkedList(链表：查找慢、增删快)
+			--Vector（过失的类，数组，线程安全的）
+		Set:无序、无能重复
+			HashSet(哈希表：数组+链表)
+			LinkedHashSet（哈希表（元素唯一）+链表（有序））
+			TreeSet(红黑树，特殊的二叉树，自平衡二叉树)
+				排序：
+					自然排序（元素自身具有比较性，元素是实现comparable）
+					比较器排序（实现comparaotor接口创建比较器）	
+	Map:双列集合
+		Map集合的数据结构只针对key有效
+		HashMap
+			LinkedHashMap
+		TreeMap
+		Hashtable:JDK1.0,功能和HahsMap是一样的，线程安全的，被hashmap替代，不可以存储null
+		
+		Collections：是集合的工具类，大量的静态方法
+	
+		
+	
+	
+	
+	
+	
+
+					
+			
+			
+			
+
+			
+		
+	
+		
+	
+	
+	
+
+		
+		
+	
+	

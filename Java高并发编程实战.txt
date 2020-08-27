@@ -1,0 +1,252 @@
+1、线程介绍
+并行：是指多个线程同时运行，是在系统级别的，比如多个cpu实现。
+并发：并发是指cpu进行快速的切换，在一个时间段内执行不同的线程。
+2、创建线程
+	非守护线程 程序的入口main、几个守护线程
+	Thread举例  一个线程读，一个线程写
+3、线程生命周期
+	new Thread() --start()--> runnable  --dispatch--> running  
+	                
+					            blocked   
+								
+								         terminated
+	
+	Thread的run方法主要是使用了，模板方法的技巧，模板方法一般写成final 方法
+	
+	1、java应用程序main函数是一个线程，是被jvm启动的时候调用，线程的名字叫main
+	2、实现一个线程，必须创建Thread实例， override run方法，并且调用start方法
+	3、在JVM启动后，实际上有多个线程，但是至少有一个非守护线程
+	4、当你调用一个线程start方法的时候，此时至少有两个线程，一个是调用你的线程，还有一个是start线程
+	5、线程的生命周期 new runnable running block termate
+4、采用多线程方式模拟加号排队
+	1、Thread,用static实现所有线程共享一个全局变量
+	2、实现Runnable，把逻辑处理和线程隔离，实现三个线程使用一份数据
+	
+5、策略模式在Thread和Runnable中的应用
+	控制逻辑和本身算法分离的方式叫做策略模式
+	Runnable应用的是策略模式
+
+6、Thread Api应用
+	1、创建线程对象，默认会有一个线程名，Thread + 0，以0为基准增加
+	2、如果在构造Thread的时候没有传递Runnable或者没有复写Thread的run方法，该Thread将不会调用任何东西，
+	如果传递了Runnable接口的实例，或者重写了Thred的run方法，则执行该方法的逻辑单元
+	3、如果构造线程对象时未传入ThreadGroup,Thread会默认获取父线程的ThreadGroup作为该线程ThreadGrouup,
+	此时父线程和子线程会在同一个ThreadGroup中
+	4、构造Threa的时候传入stacksize代表着该线程的占用stack的大小，如果没有指定stacksize的大小，默认是
+	是0，0代表着忽略该函数，该参数会被JNI函数去使用，需注意，该参数在一些平台有效，一些平台中无效。
+7、守护线程和线程优先级
+    A<--------------------------------->B
+	-> t.setDaemon(true);
+	t.setDaemon(true); 设置守护线程,在start()前调用
+	主线程挂掉，从线程设置为setDaemon()后，主线程挂掉，从线程也会挂掉
+	
+	线程优先及
+	getName(); --获取线程名字
+	getId();  --获取线程数量
+	getPriority();  --获取线程优先级
+	Thread.MAX_PRIORITY  --优先级比较高的优先执行，也不定
+8、 join()
+    join()的意思是等该线程执行完才会执行当前的线程
+	join(100,10),等100毫秒后，此线程还没结束，就执行当前线程
+	Thread.currentTread.join();
+	应用场景：从其他多个系统采集数据，一个线程负责一个系统，当所有线程采集完之后，再进行写入数据，可以用join()实现
+9、Interrupt()
+   t.isInterrputed()
+   t.interrput()打断当前线程
+   会打断sleep()\wait()\join() 方法
+10、关闭线程方式
+	1、利用变量判断
+	2、利用interrput()打断，在异常中break
+	3、没有判断线程的状态，怎么样强制关闭线程
+	设置一个执行线程和一个执行线程的守护线程 ThredService
+11、线程安全问题
+	1、解决方案：同步代码块的方式解决 synchronize 方式处理，在代码块中是单线程处理的,锁对象是Object
+	2、同步方法：synchhronize不能在重写的run方法中，锁对象是this
+	3、证明同步方法：synchhronize 使用this锁
+	4、同步静态方法：static synchhronize，静态锁是class对象
+
+12、死锁问题
+	jps jstack工具分析死锁
+
+13、线程通讯
+	生产者和消费者生产
+	1、第一版本
+	2、第二版本 （多线程会出现问题） wait() 被唤醒后进入可运行状态 和 notify() 唤醒线程，wait(long timeout)
+	3、第三版本  notifyAll() 配合while
+
+14、The difference of sleep and wait;
+	1、sleep is the method of Thread，but the wait is the method of Object.
+	2、sleep will not release the object monitor(Lock),but the wait will be release the monitor and 
+	add to the Object monitor waiting queue.
+	3、user sleep not depend on the  monitor,but wait need.
+	4、The sleep method not need be wakeup,but wait need(wait(10))
+15、综合案例
+	1、线程不是越多越好，当线程达到一个峰值的时候，就会产生问题
+	Optional.of("").ifPresent(System:out:println);
+
+
+16、显示锁
+	1、第一个版本，如何实现一个自己显示的锁？
+	2、第二个版本，那个线程获得锁由哪个线程执行
+	3、synchronized不能被打断，利用自定义锁（有超时时间限制）
+17、如何给你的钩子模式注入钩子模式
+	给程序注入
+	Runtime.getRuntime().addShutdownHook(new Thread() ->{
+	});
+	
+18、如何捕获线程运行期间的异常
+	子线程没有方法抛出异常
+	采用这个方法捕获子线程
+	t.setUncaughtExceptionHandler((thread,e) ->{
+		
+	});
+	java8把堆栈处理好
+19、ThreadGroup api 介绍
+	
+20、线程池原理和自定义线程池
+	单线程的缺点
+	线程创建和销毁需要耗费内存和时间
+	
+	1、任务队列
+	2、拒绝策略（抛出异常，直接丢弃，阻塞，临时队列）
+	3、init(min)
+	4、active
+	5、max
+	min<=active<=max
+	
+	自定义线程池 
+	拒绝策略
+	
+--================================================
+高并发编程的第二阶段
+
+1、单例设计模式
+	1、直接加载
+	2、懒加载
+	3、synchronized方法
+	4、double check，synchronized方法块
+	5、double check add volatile,
+		private static volatile SingletonObject5 instance;
+		volatile表示读的时候，写的过程全部完成
+	6、私有静态内部类
+	7、枚举方式
+2、WaitSet in synchronized monitor
+	1、所有对象都会有一个wait set,用来存放调用了该对象wait方法之后进入block状态线程
+	2、线程被notify之后，不一定立即得到执行。
+	3、线程从wait set被唤醒顺序不一定是FIFO.
+		wait(),放弃锁后会记住内存地址，重新获得锁不会重新执行钱前面的代码
+
+3、volatile
+	1、不能保证原子性
+	2、可以保证内存可见性
+	3、可以保证程序执行顺序
+	
+	每个线程都有一个cache，如果只有读操作可能会造成只在cache中拿数据，如果有写的操作就会去主内存去拿
+	线程1 --》 cache1(缓存) --》主内存
+	
+	cache还是有不同级别
+	
+	i=1;
+	i = 1+1;
+	cpu1	main memory -> 1 -> cache i+1 -> cache(2) -> main memory(2)
+	cpu2	main memory -> 1 -> cache i+1 -> cache(2) -> main memory(2)
+		
+	1、给数据总线加锁
+		总线（数据总线、地址总线、控制总线）
+		LOCK#
+	2、CPU高速缓存一致性协议
+	
+	核心思想
+		1、当cpu写入数据的时候，如果发现该变量别共享（也就是说，在其他cpu中也存在该变量的副本），会发出一个信号，通知其他cpu该变量的缓存无效
+		2、当其他cpu访问该变量，则从主内存中重新获取
+		内存：
+			RAM
+			ROM
+		CPU的寄存器
+		CPU指令
+		汇编
+	
+	并发编程中三个比较重要的概念
+	1、原子性A
+		一个操作或者多个操作，要么都成功，要么都失败，中间不能由于任何的因素中断。
+	2、可见性V
+	3、有序性（顺序性）O
+		重排序只要求最终一致性
+		
+	1、原子性
+		对于基本数据类型的变量读取和赋值是保证了原子性的，要么成功，要么失败，这些操作都不可以中断
+	2、可见性
+		使用volatile关键字保证可见性
+	3、有序性
+			happens-before relationship
+		3.1 代码的执行顺序，编写在前面的发生在编写在后面的
+		3.2 unlock必须发生在lock之后
+		3.3 volatile修饰变量，对一个变量的写操作先对于该变量的读操作
+		3.4 传递规则，操作A先与B，B先于C，那么A肯定优先于C
+		3.5 线程启动规则，start方法肯定先于线程run
+		3.6 线程中断规则，interrupt这个动作，必须发生在finalize之前
+		3.7 对像销毁规则，初始化必须发生在finalize之前
+		3.8 线程终结规则，所有的操作都发生在线程死亡之前
+		
+	volatile关键字
+	一旦一个共享变量被volatile修饰，具备两层语义
+		1、保证了不同线程的可见性
+		2、禁止对器进行重排序，也就是保证了有序性
+		3、并未保证原子性
+		i++
+		语义：
+		1、read from main memory i -》1
+		2、i = 1+1;
+		3、i = 2;
+		
+		1、保证重排序的顺序不会吧后面的指令放到屏障的前面，也不会把前面的放到后面
+		2、强制对缓存的修改操作立刻写入主存
+		3、如果是写操作，他会导致其他CPU中的缓存失败
+		
+		
+		
+	volatile关键字总结：
+	volatile的使用场景
+	1、状态变量标记
+	volatile boolean flag = flase;
+	2、屏障前后的一致性
+	
+	volatile boolean init;
+	-------Thread 1--------------
+	obj = createObj() 1;
+	init = true;
+	
+	------Thread 2---------------
+	while(!init){
+		sleep();
+	}
+	useTheObj(obj);
+	
+4、观察者设计模式 Observer
+
+	线程周期监听接口
+	线程周期监听观察者实现周期监听接口
+	抽象类线程工作者实现Runable接口，并传入监听对象
+	
+	一个subject
+	一个observer接口，传入需要监听的对象
+	多个observer接口实现类，
+	
+5、单线程执行设计模式
+
+	资源共享，会出现线程安全的问题，加同步方法可以解决。
+	
+	
+		
+	
+	
+	
+	
+
+
+		
+	
+	
+	
+   
+	
