@@ -1,0 +1,6 @@
+1、Stack extend Vector
+	1、push()方法，压栈，new Stack对象会是实例化一个Vector对象，创建一个长度为10的空数组，如果初始化的数组长度不够了，则扩展该数组，数组长度++;
+	2、pop()方法，弹栈，数组--，array[数组--] = null /*to let gc do its work */,返回该元素的值，调用peek()方法，返回数组array[数组--]
+	3、peek()方法，
+	4、empty()方法，return size() == 0;
+	5、search(Object object)方法，调用lastIndexOf(数组大小--)

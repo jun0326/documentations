@@ -1,0 +1,11 @@
+1、Executors 线程池
+	1、缓存型线程池：主要用于执行生存期很短的异步任务，开启的线程不限定。
+		ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+	2、可重用固定线程池：以共享无界队列方式运行这些线程。
+		ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int n);
+	3、创建一个定长线程，支持定时及周期性任务执行一段时间
+		ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(10);
+	4、ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+		创建一个单线程化的线程池，只会用唯一的工作来执行线程，保证所有任务都是按照指定顺序完成
+2、Thread、Runnable接口、Callable<V>接口
+

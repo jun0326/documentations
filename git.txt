@@ -1,0 +1,312 @@
+1、git是分布式的
+2、版本控制工具应具备的功能
+	1、协同修改
+	2、数据备份
+	3、版本管理
+		svn采用增量式管理的方式，而Git采用了文件系统快照的方式
+	4、权限控制
+	5、历史记录
+	6、分支管理
+	
+	svn与git区别
+		svn是集中式的版本控制工具，存在单点故障问题
+		git是分布式的，本地有个本地库，本地就有一个完整的版本历史记录
+	
+	git是C语言开发出来的
+	
+	git的优势
+		大部分操作在本地完成，不需要联网
+		完整性保证
+		尽可能添加数据而不是删除或修改数据
+		分支操作非常快捷流畅
+		与Linux命令全面兼容
+		
+	git安装
+		git是分布式的，部分客户端和服务端
+		
+	git在本地结构
+		1、本地库
+			历史版本
+		2、暂存区
+			临时存储
+		3、工作区
+			写代码
+		
+		工作区 --》 git add --》 暂存区 --》 git commit --》 本地库
+		
+	git和代码托管中心
+		代码托管中心的任务是：维护远程库
+	1、局域网环境下	
+		gitLab服务器
+	2、外网环境下
+		github
+		码云
+	本地库和远程库交互方式
+		1、团队内部协作
+		2、跨团队协作
+		
+3、Git命令行操作
+	本地库初始化：
+		1、git init
+		2、效果
+		3、注意：.git目录中存放的是本地库相关的子目录和文件，不要删除，也不要胡乱修改
+
+4、设置签名	
+	形式：
+		用户名：jun
+		邮箱地址：
+	作用：
+		区分不同开发人员的身份
+	辨析：这里设置的签名和登录远程库（代码托管中心）的账号、密码没有任何关系。
+	命令：
+		项目级别/仓库级别：仅在当地项目有效
+			git config user.name jun0326
+			git config user.email 15766228041@163.com
+		系统用户级别：登录当前操作系统的用户范围	
+			git config --global user.name jun_pro
+			git config --global 15766228041@163.com
+		级别优先级
+			就仅原则：项目级别优先于系统用户级别，二者都有采用项目级别的签名
+			如果只有系统用户级别的签名，就以系统用户的签名为准
+			二者都没有不允许
+			
+5、命令介绍
+	git status
+	git add 文件名 --》 放到暂存区
+	git rm --cached <file> :把文件从暂存区退回到工作区
+	git commit <file> : 从暂存区到本地库
+	git commit -m "注释" <file>: 提交信息有注释
+	root-commit：根提交认为是第一次提交
+	1、状态查看
+		git status
+		查看工作区、暂存区状态
+	2、添加操作
+		git add 【file name】
+		将工作区的 "新建/修改" 添加到暂存区
+	3、提交操作
+		git commit -m "commit message" 【file name】
+		将暂存区内容提交到本地库
+	4、查看提交日志
+		git log
+			空格向下翻页
+			b向上翻页
+			q退出
+		git log --pretty=online
+		git log --online
+			只显示当作指针和后面的情况
+		git reflog
+			HEAD@{0} 当前指针移动情况
+			所有版本都显示
+	5、前进后退
+		1、索引值操作（推荐）
+			git reset --hard 索引值
+		2、使用^符号
+			只能往后
+			git reset --hard HEAD^ 
+			注：一个^表示后退一步，n个表示后退n步
+		3、使用~符号
+			只能往后退
+			git reset --hard HEAD~3  
+			注：表示后退3步
+			
+		4、reset命令参数对比
+			--soft
+				仅仅在本地库移动指针
+			--hard
+				在本地库移动指针
+				重置缓存区
+			--mixed
+				在本地库移动指针
+				重置缓存区
+				重置工作区
+		5、删除文件找回
+			rm <file>
+			把提交的文件
+			git add
+			git commit 
+			可以找到节点
+		6、在暂存区文件删除找回
+			git  reset --hard HEAD
+			
+		7、总结
+			前提：删除前，文件存在时的状态提交到了本地库
+			操作：git reset --hard[指针位置]
+			删除操作已经提交到本地库，指针位置指向历史记录
+			删除操作尚未提交到本地库：指针位置使用HEAD
+			
+			
+	8、比较文件差异
+		git diff [file name] :将工作区的文件和暂存区比较
+		git add -->暂存区
+		git diff HEAD [file name]：将工作区文件和本地库进行比较
+		git diff HEAD^ [file name]: 和本地库上一个版本比较
+		
+		git diff HEAD [file name]: 不带文件名可以看多个文件差异
+6、分支概述
+	1、什么是分支
+		在版本控制过程中，使用多条线同时推进多个任务
+		hot_fix
+		master
+		jun_dev
+	2、分支的好处
+		1、同时并行推进多个功能开发，提高开发效率
+		2、各个分支在开发过程中，如果某一个分支开发失败，不会对其他分支有任何影响
+		失败的分支删除重新开始即可。
+	3、分支操作
+		1、git branch -v 看所有的分支
+		2、git branch hot_fix 创建一个热备份分支
+		3、git checkout hot_fix 切换分支
+		4、合并分支
+			1、切换到接受修改的分支（被合并，增加新内容）上
+				git checkout [被合并分支名]
+			2、执行merge命令
+				git merge [有新内容分支名]
+			比如：hot_fi修改的内容，要合并到master
+				1、切换到master
+				2、git merge hot_fix
+		5、解决冲突
+			手动解决冲突：
+				1、编辑文件，删除特殊符号
+				2、把文件名修改到满意的程度，保存退出
+				3、git add[文件名]
+				4、git commit -m "日志信息"
+					注意：此时commit一定不能带具体文件名
+					
+5、Git基本原理
+	1、哈希算法
+		哈希是一个系类的算法
+	2、哈希特点
+		1、不管输入数据的数据量多大，输入同一个哈希算法，得到的加密结果长度固定
+		2、哈希算法确定，输入数据确定，输出数据能够保持不变
+		3、哈希算法确定，输入数据有变，输出数据肯定是变的
+		4、哈希算法不可逆
+		GIT采用的是SHA1加密
+6、GIT保存版本的机制
+	快照方式管理版本，如果内容没有改变则创建一个指针指向前一个版本
+7、分支管理
+	分支管理是利用指针的切换进行控制的
+	
+8、创建远程库
+	只要在github创建一个版本即可
+	
+	1、git remote -v 查看是否配置远程库
+	2、git remote add origin 远程地址
+	
+	origin  git@github.com:jun0326/microservicecloud-config.git (fetch)
+	fetch表示取回
+	origin  git@github.com:jun0326/microservicecloud-config.git (push)
+	push表示推送
+	
+	推送命令
+		git push origin master
+		
+9、克隆
+	克隆命令
+	 git clone https://github.com/jun0326/microservicecloud-config.git
+	 
+	效果
+		1、完整的把远程库下载到本地
+		2、创建orgin远程地址别名
+		3、初始化本地库
+	新加入团队成员需要在gitlab邀请
+10、拉取
+	git pull origin/master
+	是fetch和merge操作的合并
+	pull = fetch + merge 
+	git fetch origin master
+	
+	git checkout origin/master --查看远程库内容
+	
+	git checkout master
+
+	git merge origin/master
+11、解决团队协作冲突
+	1、假如push远程有冲突
+		1、如果不是基于远程库的最新版本所做的修改，不能推送，必须先拉取
+		2、拉取下来后如果进入冲突状态，则按照“分支冲突解决”操作解决即可。
+			1、先把远程版本获取到，手工处理冲突
+			2、git add 
+			3、git commit
+			4、git push origin master
+12、跨团队协作
+	1、分支团队fork主团队代码
+	
+	2、分支团队本地修改推送远程
+	
+	3、分支团队pull Requests
+	
+	4、主团队pull requests
+	
+	5、审核代码，然后merge pull requests
+13、SSH密码免密登录
+	百度操作
+14、ECLIPSE结合git使用
+	1、创建工程
+	2、初始化本地库
+		idea初始化本地库百度可以操作
+		
+	3、ignore 文件
+		.classpath 文件
+		.project 文件名
+		.settings 文件名
+		为什么要忽略掉eclipse特定文件
+		
+		配置：
+		https://github.com/github/gitignore/blob/master/Java.gitignore 参考
+		
+		1、在.gitconfig目录下创建Java.gitignore文件
+		2、在.gitconfig文件中配置下面内容
+		[core]
+		excludesfile = C:\Users\chenzuen\Java.gitignore
+		
+		[core]
+		excludesfile = C:/Users/Administrator/Java.gitignore
+		
+		如果没有找到.gitconfig文件，则需要在当前Users目录下新建一个.gitconfig
+		推送远程仓库时，
+		必须设置 
+			--global user.email "15766228041@163.com"
+			--global user.name "jun0326"
+		git config --global user.email "15766228041@163.com"
+		git config --global user.name "jun0326"
+		git config --global --list --查看配置文件列表
+		
+		
+15、推送到远程库
+
+16、将远程库clone到本地
+	1、oxygen eclipse  --高版本
+	2、kepler eclipse --低版本 克隆工程操作
+	问题：不能保存到工作区目录
+	
+17、解决eclipse推送远程库时，解决文件冲突
+
+18、git工作流
+	 1、集中式工作流
+	 2、GitFlow工作流
+	 详见Git工作流图片
+
+19、分支实战
+	1、在master中，创建分支
+	2、修改后commit到本地库
+	3、然后推送到远程，远程会自动创建一个分支
+	
+	---============
+	4、其他成员可以拉取新创建的分支
+	5、然后合并到本地master
+	6、最后将master推送到远程
+	
+20、Gitlab服务器搭建过程
+	1、gitlab官网
+	2、linux 安装 gitlab
+	3、浏览器访问gitlab
+	
+	
+	
+		
+		
+
+
+
+		
+		
