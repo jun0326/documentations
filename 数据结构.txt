@@ -4,3 +4,6 @@
 	3、peek()方法，
 	4、empty()方法，return size() == 0;
 	5、search(Object object)方法，调用lastIndexOf(数组大小--)
+	
+2、LinkedList implements List<E>
+	1、addAll(Collection<? extends E>);通过遍历把所有的数据都放进链表节点中。
