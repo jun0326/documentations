@@ -1,0 +1,40 @@
+1、创建临时表空间
+	create temporary tablespace jun_temp
+	tempfile 'E:\soft\Oracle\oradata\jun\file_temp.dbf' size 50m   autoextend on  next 50m maxsize 2048m  extent management local;  
+	
+2、创建表空间
+	create tablespace jun         logging         datafile 'E:\soft\Oracle\oradata\jun\file_data.dbf'
+	size 50m         autoextend on         next 50m maxsize 5120m         extent management local;    
+	
+3、删除表空间
+	drop tablespace jun_filedata including contents and datafiles cascade constraint;
+	
+4、在指定表空间创建用户
+	create user jun identified by 113113 default tablespace jun  temporary tablespace jun_temp; 
+	
+5、给用户授予权限       
+	grant connect,resource,dba to jun;
+	
+6、给用户授权表权限
+	grant select on dept2 to scott;
+	
+7、数据库、表空间、临时表空间、用户表
+	一个数据库可以有多个表空间，一个表空间可以有多张表，一个表空间建议只创建一个用户，不同表空间的用户可以通过给用户授权表权限的方式实现。
+		oracle 用户名.表名 对等于 mysql 库名.表名
+	
+oracle账户和密码
+全局数据库名orcl
+密码：113113
+
+127.0.0.1:1521/orcl
+scott 
+113113
+
+127.0.0.1:1521/orcl
+jun -- 表空间中的用户名
+113113 -- 用户登录密码
+
+
+
+
+
