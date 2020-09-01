@@ -1,0 +1,540 @@
+mq是一种协议
+mq = 消息中间件
+1.1 消息
+	微信/短信/语音 一种协议
+1.2 中间件
+服务提供者、消费者
+
+mq如何学习
+在何种场景下使用消息中间件
+为什么要在系统里引入消息中间件
+
+mq产品种类
+kafka\rabbimq\rocketmq\activemq
+
+api发送和接收
+mq的高可用性
+mq的集群和容错配置
+mq的持久化
+延时发送/定时投递
+签收机制
+spring整合
+技术维度
+
+为什么要引入acitvemq
+在何种场景下使用消息中间件
+为什么要在系统里引入消息中间件
+解决了耦合调用的问题
+异步模型
+抵御洪峰流量，到达保护主业务的目的，消峰。
+
+
+系统之间的直接调用
+系统之间接口耦合比较严重
+面对大流量并发时，容易被冲垮
+等待同步存在性能问题
+
+消息中间件作用定义
+队列/主题  发送和接受是异步的，发布pub/订阅sub模式
+
+队列是一对一，发送和接收是异步，发短信
+主题，订阅过的通通下发，一对多，朋友圈
+
+activemq 下载
+1、官网下载
+2、opt目录  上传命令rz 如果没有此命令，需要安装 第三方软件安装路径
+3、解压缩  
+3.tar命令
+tar -cvf 123.tar file1 file2 dir1 该句命令实现一个tar压缩，它是将两个文件（file1和file2）和一个文件夹(dir1)压缩成一个123.tar文件。
+
+tar -zxvf apache-tomcat-7.0.75.tar.gz 该命令在解压安装tomcat时使用，是将apache-tomcat.7.0.75.tar.gz直接解压到当前目录下。tar同时具有压缩的解压的功能，使用时根据参数和命令结构区分。
+
+
+4、创建文件夹 mkdir /myactiveMQ
+5、拷贝文件至/myactiveMQ 文件夹中
+6、普通启动mq：./activemq start
+7、activemq默认的进程端口是61616
+8、查看进程命令 ps -ef|grep activemq|grep -v grep
+9、查看端口命令 netstat -nap | grep 61616
+ lsof -i :61616
+10 关闭 ./activemq stop
+
+11、带日志的启动方式
+./activemq start > //usr/local/myactivemq.log
+
+windowip ipconfig
+linux ifconfig
+前台端口192.168.12.128:8161
+lin:8161
+window: 192.168.12.1
+
+
+开启：bai chkconfig iptables on
+关闭： chkconfig iptables off
+2) 即时生du效，重启后复原
+开启： service iptables start
+关闭： service iptables stop
+查看防火墙状态： service iptables status
+
+
+默认密码：admin admin
+
+--===========================
+
+使用java代码实现Activemq
+JMS总体编码架构
+队列 一对一
+主题 一对多
+队列案例
+一对一
+时间上没有相关性
+消费后队列不会再存储消息
+主题队列案例
+一对多有时间上相关性
+topic不保存消息，只能先启动消费者再启动生产者
+
+topic和queue对比
+工作模式
+
+JMS
+Javaee是一套使用Java进行企业级应用开发的13中规范
+jms是什么
+java消息服务指的是两个应用程序之间进行异步通信的API
+MQ中间件的其它落地产品
+kafka\rabbimq\rocketmq\activemq
+
+jms的组成结构和规范
+4大部分
+
+Jms message
+消息头
+设置消息目的地
+保持消息的可靠性和消息的持久化
+持久模式和非持久模式
+消息过期时间
+消息优先级
+消息id
+唯一识别每个消息id
+保持消息的幂等性
+
+消息体
+封装具体的消息数据
+5中消息格式 普通字符串
+TextMessage 一个Map类型，键值对
+MapMessage
+BytesMessage
+StreamMessage
+ObjectMessage
+
+消息属性
+识别去重、标记、过滤，加强型api使用
+
+
+消息的持久化
+持久
+--Queue
+非持久化 
+producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+服务器宕机，消息不存在
+持久化
+producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+服务器宕机，消息存在，消息的可靠性
+队列默认的的持久化方式
+队列默认是持久化方式
+
+--Topic持久化
+有人订阅了，后来取消订阅了，还是可以收到消息，订阅和发布。
+如果是没有持久化就不可以收到信息
+
+事物
+事物偏生产者，有false、true
+假如使用true，需要commit提交，相当于手动提交
+一般使用事物，出现异常会回滚
+假如使用false，不需要commit，默认提交事物
+
+消费者事物
+假如事物是false，只能消费一次
+假如有事物是ture，需要使用commit提交事物，防止信息被重复消费
+
+签收机制
+策略：
+自动签收
+手动签收
+允许重复签收
+
+非事物签收
+自动签收
+手动签收
+开启手动签收时，需要调用消息acknowledge()方法
+允许重复签收
+
+事物签收
+自动签收
+手动签收
+开启手动签收时，有commit，不需要调用消息acknowledge()方法
+允许重复签收
+
+签收偏消费者
+
+集群
+
+--上面四点是保持activemq高可用性的特点
+--点对点和订阅和发布的区别
+
+--=======================
+activemq broker
+
+broker 相当是一个actieMQ实例，嵌在代码中
+
+xbean:file:/usr/local/apache-activemq-5.14.5/conf/activemq01.xml
+不同的配置文件模拟不同的实例
+
+--=======================
+spring整合activemq
+
+消费者可以直接通过配置监听完成
+
+
+--=======================
+springboot整合activemq
+队列
+主题
+
+--===================
+activemq传输协议
+tcp
+nio
+udp
+ssl
+http(s)
+vm
+
+bio 
+openWire  默认的
+tcp
+默认的broker配置，tcp的监听端口61616
+tcp传输的优点
+
+nio
+url连接地址
+nio//hostname:port?key=value
+配置端口61618
+
+nio案例增强
+nio + tcp
+nio + tcp所有
+ 
+conf/activemq.xml 配置 vim 输入i 退出： 保存wq 不保存强制退出q!
+<transportConnector name="auto+nio" uri="auto+nio://0.0.0.0:61608?maximumConnections=1000&amp;
+                wireFormat.maxFrameSize=104857600&amp;
+                org.apache.activemq.transport.nio.SelectorManager.corePoolSize=20&amp;
+                org.apache.activemq.transport.nio.SelectorManager.maximumPoolSize=50" />
+也可以注掉其他协议
+
+--activemq的消息存储和持久化
+
+--可用性4个维度
+持久
+事物
+签收
+上面3个维度mq自带
+持久化 --物理备份
+
+持久化机制有哪些
+JDBC AMQ KahaDB LevelDB
+
+AMQ基于文件存储形式 了解
+
+kahaDB 5.4 默认的存储机制，基于日志文件和索引文件存储它所有的地址
+数据被追加到data logs中，当不再需要log文件中的数据的时候，log文件会被丢弃
+da-1.log
+db.data 索引文件
+db.free
+db.redo 备份
+lock 锁
+
+jdbc消息存储 v4 
+性能慢，存储在数据可靠性号一点
+
+leveldb消息存储--了解
+5.8版本后引入，也是基于文件本地数据库存储形式，可比leveldb快
+
+---===============================
+jdbc案例实战
+1、拷贝jar包
+2、修改acitvmq.xml
+<jdbcPersistenceAdapter dataSource="#mysql-ds" createTablesOnStartup="true" />
+
+
+<persistenceAdapter>  
+    <jdbcPersistenceAdapter dataSource="#mysql-ds"/>   
+</persistenceAdapter>
+
+<bean id="mysql-ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">  
+          <property name="driverClassName" value="com.mysql.jdbc.Driver"/>   
+          <property name="url" value="jdbc:mysql://192.168.12.1:3306/activemq?relaxAutoCommit=true"/>  
+          <property name="username" value="root"/>  
+          <property name="password" value="113113"/>   
+          <!--<property name="poolPreparedStatements" value="true"/>   -->
+</bean>  
+
+3、建立一个activemq的数据库
+4、Activemq_msgs\activemq_acks\activemq_lock 三张表
+5、代码
+一定要开启持久化  消息进入mysql，消费后会消失
+设置为飞持久化机制  消息没进入mysql
+
+主题
+acks 订阅者存在
+msg 消息发布后也会存留在表中
+小总结：
+开发坑：
+queue msg 消费后消失
+topic ack订阅者，activemq删除数据数据也会删除
+
+开发有坑
+mysql-jdbc驱动的jar包放在对应的数据库连接池
+
+createTablesOnStartup属性
+在第一次启动时候，可以设置为true，启动后可以去掉这个属性
+
+这种方式客服了JDBC STORE的不足，JDBC每次发消息过来，都需要去写库和读库
+ACTIVEMQ Journal 使用高速缓存写入技术，大大提高了性能
+当消费者的消费速度能够及时跟上生产者生产的消息，journal则文件能够大大减少写入数据库的数据
+
+
+<persistenceAdapter>  
+    <journalPersistenceAdapterFactory
+    journalLogFiles="4"
+    journalLogFileSize="32768"
+    useJournal="true"
+    useQuickJournal="true"
+    dataSource="#mysql-ds"
+	dataDirectory="activemq-data"/>   
+</persistenceAdapter>
+
+持久化小总结
+持久化消息主要是指：
+MQ所在服务器down了消息不会丢失的机制
+activemq的消息持久化机制有：
+amq 基于日志文件
+kahadb 基于日志文件，从activeMQ 5.4 开始默认的持久化插件
+JDBC 基于第三方数据库
+LevelDB 基于文件的本地数据库储存 从ActiveMQ 5.8版本之后又推出了LevelDB的持久化引擎性能高于LevelDB
+Replicated LevelDB Store 从ActiveMQ5.9提供了基于LevelDB和zookpeer
+
+
+-=======================
+集群
+引入消息队列之后该如何保证其高可用性
+集群是什么：基于zookeeper和LevelDB搭建ActiveMQ集群，
+集群仅提供主备方式的高可用集群功能，避免单机故障
+zookper —— replicated-leveldb-store
+
+三种集群方式对比
+
+kahakdb
+jdbc
+zookeper 
+
+一个master 2个slave
+
+集群规划配置表
+
+创建3个集群目录
+修改端口：
+修改jetty.xml 文件端口  
+
+hostname名字映射
+修改broker 的name 
+
+三台activemq挂到zookeeper
+
+代码修改 
+
+
+activemq高级特性和大厂面试
+引入消息队列之后该如何保证其高可用性
+大部分默认情况下是异步的
+
+异步投递
+对于慢消费者，适用于异步发送
+activemq支持同步、异步
+异步发送如何确认消息发送成功
+2中情况使用同步发送
+明确使用同步发送，在未使用事物的前提下发送持久化的消息
+异步发送需要接收回调函数反馈才会确认成功
+同步发送是不阻塞了就表示成功
+
+代码：
+使用JMSmESSAGEId 加入消息标识
+send(message,new AsyncCallback(){
+	@Overrid
+	public void onSuccess(){
+	}
+	@Overrid
+	public void onException(){
+	}
+})
+
+
+延迟投递和定时投递
+四大属性：
+延迟投递的时间 
+重复投递的时间间隔
+重复投递的次数 corn
+ScheduleMessage
+
+分发策略
+
+ActiveMQ消费重试机制
+
+具体哪些情况会引起消息重发
+1、client用了transactions且在session中调用了rollback()
+2、Client用了transactions且在调用commit()之前关闭或者没有commit
+3、Clinet在Client_acknowLedge的传递模式下，在session中调用了recover()
+请说说消息重发时间间隔和重发次数
+间隔 1
+次数：6
+
+有毒消息Poison ACK谈谈你的理解
+有毒消息放在DLQ(死信队列)
+
+
+死信队列
+投递失败、重复消费的信息会放到死信队列
+
+自动删除过期消息
+存放非持久消息到消息队列
+
+如何保证信息不被重复消费，幂等性问题
+
+插入数据库：给消息做一个主键
+先把消息的消息存入redis
+
+
+
+一、什么是消息队列
+消息队列其实是一种中间件
+消息队列有什么用
+1、解耦，当有多个系统需要用到一个系统的信息时，那么这个系统则把消息推送到中间件，后面有需要这个信息时都可以从这个系统取，提供信息的系统则与其他系统没有太多的关系
+2、异步，当一个系统调用多个系统的接口时，则可能出现串行情况，现在只需要把消息放在中间件，等其他系统来消费
+3、削峰/限流 当出现高并发时，服务器处理不过来这么多请求，则把请求先放在中间件，服务器根据自己的处理能力去消费消息。
+
+二、消息队列的高可用性主要由哪些特性去实现
+1、持久化
+2、事物
+3、签收机制
+4、集群，单机版不能实现高可用
+
+三、对于持久化
+队列：
+如果代码设置为持久化，服务器宕机后，消息还是会存在队列中的，如果代码设置为非持久化，服务器宕机后，队列中的消息会消失，默认方式是持久化。
+主题：
+如果订阅者设置为持久化，服务器宕机后，重启还是可以收到消息的，如果没有设置为持久化，则收不到信息。
+
+四、对于事物，事物偏生产者，有fasle\true。
+生产者：
+如果事物设置为true，则需要手动提交事物commit，如果设置为false，则默认自动提交，一般选择开启事物，因为出现异常会回滚。
+消费者：
+如果设置为false，则只会消费一次，如果设置为true，没有手动提交，则造成消息被重复消费。
+
+五、对于签收，签收偏消费者
+非事物签收：
+默认是自动签收，如果启动手动签收则需要acknowledge()方法确认，否则会出现重复签收
+事物签收：
+默认是自动签收，如果是开启手动签收，只要有commit事物就不用调用acknowledge()方法确认
+
+六、activemq的持久化机制有哪些
+jdbc\kahaDB\levelDB\amq
+
+kahaDB
+kahaDB activemq5.4 默认的存储机制，基于日志文件和索引文件存储它所有的地址
+有五个文件
+da-1.log --数据被追加到data logs中，当不再需要log文件中的数据的时候，log文件会被丢弃
+db.data 索引文件
+db.free
+db.redo 备份
+lock 锁
+
+amq --基于文件形式存储
+jdbc --性能慢，存储在数据库可靠性好一点
+1、需要修改配置问及那
+2、建立一个数据库
+3、会产生三张表activemq_msgs(生产者存放的信息)、activemq_acks(存放订阅者信息)、activemq_locks
+4、代码一定要开启持久化，数据库才会有数据
+5、优化
+activemq journal 使用高速缓存写入技术，大大提高了性能,当消费者的消费速度能够及时跟上生产者生产的消息，journal则文件能够大大减少写入数据库的数据
+<persistenceAdapter>  
+    <journalPersistenceAdapterFactory
+    journalLogFiles="4"
+    journalLogFileSize="32768"
+    useJournal="true"
+    useQuickJournal="true"
+    dataSource="#mysql-ds"
+	dataDirectory="activemq-data"/>   
+</persistenceAdapter>
+levelDB --activemq5.8后会引入，也是基于文件形式存储，效率会比levelDB好，未来的趋势。
+
+七、集群
+三个节点、一个master、二个slave，可以实现负载均衡和高可用
+
+八、activemq主要有哪2种方式
+1、队列  一对一的，类似微信发消息的过程，生产者和消费者不存在生命周期的关联关系，时间上没有相关性，消息被消费后队列不会再存储消息
+2、主题  一对多的，分发布者和订阅者，发布者不保留消息，订阅者只有订阅了，才能够接受到消息
+
+九、activemq端口
+activemq默认的进程端口是61616
+activemq前台端口是8161
+
+十、activemq的broker
+activemq的broker,相当一个activemq实例，是嵌在代码中的。
+
+十一、activemq的传输协议：
+tcp、nio、udp、ssl、http(s)、vm,默认是tcp,常用的有tcp、nio、还有auto+nio（nio加强版），配置文件activemq.xml 
+
+十二、幂等性问题,保证消息不被重复消费？
+可以给每条消息加一个标识，先把消息存入redis，key当作主键，消费前先去redis查询，如果能获取信息，则不再消费。
+
+十三、延迟投递和定时投递
+投递时间可以设置
+
+十四、acrivemq重复消费机制
+1、为什么会出现重复消费？
+	1、client用了transactions且在session中调用了rollback()
+	2、Client用了transactions且在调用commit()之前关闭或者没有commit
+	3、Clinet在Client_acknowLedge的传递模式下，在session中调用了recover()
+2、请说说消息重发时间间隔和重发次数？
+	间隔： 1s
+	次数：6
+	
+3、有毒消息
+	投递失败和重复消费的消息会被标识为有毒消息，有毒消息会存放在死信队列（DLQ）
+4、死信队列的消息要怎么处理。
+	1、会有过期时间，自动删除
+	2、队列满的情况可以把消息放置在死信队列
+	3、可以人工干预从新发送
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

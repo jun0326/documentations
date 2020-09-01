@@ -1,0 +1,371 @@
+1、Mybatis简介
+	1、工具：JDBC、DBUtils(QueryRunner)->JdbcTemplate
+	2、功能简单：sql语句编写在java代码里面，硬编码高耦合方式
+	3、全自动ORM(Object Relation Mapping)框架，指在消除sql,使用HQL
+	Mybatis:sql与编码分离，sql是开发人员控制，半自动框架，轻量级框架
+2、Mybatis实操
+	1、根据xml配置文件（全局配置文件） 创建一个SqlsessionFactory对象
+		有数据源一些运行环境信息
+	2、sql映射文件：配置了每一个sql，以及sql的封装规则等，
+	3、将sql映射文件注册在全局配置文件中
+	4、写代码
+		1、根据全局配置文件得到SqlSessionFactory
+		2、使用sqlSession工厂，获取到sqlSession对象使用他来执行增删改查
+		一个sqlSession就是代表和数据库的一次会话，用完就关闭
+		3、使用sql的唯一标识告诉Mybatis，sql是保存在配置文件中的
+	注意：javaBean字段和表名不一致时，可以手写sql别名
+3、接口式编程
+	namespace:指定为接口的全限定类名
+	id:指定为接口的方法
+	sqlSession.getMapper(DeptMapper.class); 获取接口的代理对象
+	
+	1、接口式编程
+	原生： Dao --> DaoImpl
+	mybatis: Mapper --> xxMapper.xml
+	2、SqlSession代表和数据库的一次会话，用完必须关闭；
+	3、SqlSession和connection一样都是非线程安全，每次都应该去获取新的对象。
+	4、mapper接口没有实现类，但是mybatis会为这个接口生成一个代理对象。
+	将接口和xml进行绑定
+	sqlSession.getMapper(DeptMapper.class); 
+	5、两个重要的配置文件：
+		mybatis的全局配置文件；包含数据库连接池信息，事物管理器等。。。。系统运行环境信息。
+		sql映射文件：保存了每一个sql语句的映射信息，将sql抽取出来。
+4、mybatis全局配置文件
+	1、引入约束文件，mybatis的jar包中有，可以百度操作
+	2、properties标签 
+		1、mubatis可以使用properties来引入外部properties配置文件的内容；
+		resource：引入类路径下的资源
+		url:引入网路路径或者磁盘路径下的资源
+		<properties resource="dbconfig.properties"></properties>
+	3、settings标签
+		setting:用来设置每一个设置项
+			name:设置项名
+			value:设置项取值
+		<settings>
+			<!--开启java映射数据库的驼峰命令，默认是false-->
+			<setting name="mapUnderscoreToCamelCase" value="true"/>
+		</settings>
+	4、typeAliases 别名处理器
+		<typeAliases>
+		
+			<!--1、typeAlias：为某个java类型起别名 type 指定别名的全限定类名，默认别名就是
+			类名小写，alias:指定新的别名 -->
+			<typeAlias type="cn.jun.entity.Dept" alias = "dept"/>
+			
+			<!--2、为 某个包下的所有类批量起别名
+				name:指定包名，默认别名是类名小写-->
+			<package name="cn.jun.entity" />
+			
+			<!-- @Alias注解启用别名 -->
+		</typeAliases>
+	5、typeHandlers
+		数据库类型和java数据类型映射
+		自定义类型处理器
+	6、plugins
+		插件可以拦截Executor
+	7、environments
+		mybatis可以配置多种环境，default指定使用某种环境，可以达到快速切换
+		environment:配置一个具体的环境信息；必须有两个标签 id 代表当前环境的唯一标识
+			transactionManager:事物管理器
+				type:事物管理器的类型：JDBC\MANAGED
+					自定义管理器实现TransactionFactory接口，type指定为全类名
+			dataSource:数据源
+				type:数据源类型：UNPOOLED\POOLED\JNDI
+				自定义数据源：实现DataSourceFactory接口，type是全类名
+	8、databaseIdProvider
+		多数据
+		作用就是得到数据厂商的标识（驱动）
+		MySQL, Orace,SQL Server,
+		<databaseIdProvider type="DB_VENDOR">
+			<property name="MySQL" value="mysql"/>
+			<property name="Oracle" value="oracle"/>
+			<property name="SQL Server" value="sqlserver"/>
+		</databaseIdProvider>
+		
+		sql映射文件databaseId
+	9、mappers
+		将sql映射注册到全局配置中
+		<mappers>
+		<!-- mapper:证据测一个sql映射
+			resource：引用类路径下的sql映射文件
+			url：引用网路路径或者磁盘路径下的sql映射文件
+			class:引用（注册）接口
+				1、有sql映射文件，映射文件名必须必须和接接口同名，并且放在与接口同一目录下
+				2、没有sql文件，使用的sql都是利用注解写在接口上
+				推荐：比较重要的，复杂的Dao接口，就写sql映射文件
+						不重要，简单的接口为了快速开发可以使用注解。
+			<mapper resource=""/>
+			<mapper class=""/>
+			<!--批量注册-->
+			<package name="cn.jun.mapper"/>
+		</mappers>
+	10、小结
+5、mybatis的映射文件
+	<select></select>
+	<insert paramType="cn.jun.entity.dept">
+	</insert>
+	<update></update>
+	<delete></delete>
+	
+	//手动提交事物
+	openSession.commit();
+	1、mybatis允许增删改直接定义以下类型返回值
+		Integer Long Boolean
+		
+	2、获取自增主键的值
+	mysql支持自增主键，自增主键的获取，mybatis也是利用statement.getGeneratedKeys(),
+	useGenerateKeys="true",使用自增主键获取主键策略
+	keyProperty:指定对应的主键属性，也就是mybatis获取到主键值以后，将这个值封装给javaBean的哪个属性
+	
+	
+	3、Oracle不支持自增，oracle使用序列来模拟自增，每次插入的数据的主键是从序列中
+	拿到的值，如何获取到这个值。
+	查询主键的sql语句
+	keyProperty:表示封装给哪个属性
+	order="before"：当前sql在插入sql之前执行
+	after：当前sql在插入之后执行
+	resultType="Integer"：查出数据的返回值类型
+	<selectKey keyProperty="id" order="before" resultType="Integer">
+		select employees_seq.nextval from dual
+	</selectKey>
+	4、mybatis参数处理
+		1、单个参数的情况下，不会做特殊处理，#{abc}也会拿到值
+		2、多个参数的情况下，mybatis会特殊处理
+			多个参数会被封装成一个map
+			key：param1、param2
+			value: 传入的参数值
+			#{}就是从map中获取指定的key的值：#{param1} #{param2}
+			
+			上面写法没有见名知义
+			命名参数
+			使用@Param("id") Integer id，指定参数名称
+			key：id
+			value: 传入的参数值
+			#{}就是从map中获取指定的key的值：#{id} 
+		3、如果是多个参数的时候可以使用pojo
+			#{属性名}
+		4、如果是多个参数的时候不在同一个pojo
+			可以使用传入map
+			使用#{key},取出map中对应的值
+		5、如果参数不是业务模型中的数据，但是经常要使用，推荐来编写一个TO(Transfer Object)
+		数据传输对象
+		
+		6、例子
+		public Employee getEmp(@Param("id")Integer id,String lastName);
+			取值：id ==> #{id/param1} lastName ==> #{param2}
+		public Employee getEmp(Integer id,@Param("emp") Employee emp );
+			取值：id ==> #{param1} lastName ==> #{param2.lastName/emp.lastName}
+		
+		特别注意：如果是Collection(List\Set)类型或者是数组，
+		也会特殊处理，也是把传入的list或者数组封装在map中，
+		key,Collection(collection),如果是List还可以使用这个key(list),
+		数组（array）
+		public Employee getEmpById(List<Integer> ids);
+			取值：取出第一个id的值：#{list[0]}，#{array[0]},#{collection[0]}
+			
+6、mybatis处理参数的源码
+	1、全局配置：useActualParamName(jdk1.8)：name = 参数名
+7、#{}和${}区别
+	1、#{}是以预编译的形式，将参数设置到sql语句中，相当于PreparedStatement，防止sql注入
+		${}取出的值直接封装到sql语句中，会有安全问题
+		大多情况下，推荐使用#{}
+		原生jdbc不支持占位符的地方我们就可以使用${}进行取值
+		比如分表，按照年份表拆分
+			select * from ${year}_salary where xxx;
+	2、#{}更丰富的用法
+		规定参数的一些规则：
+		javaType jdbcType mode(存储过程)
+			jdbcType通常需要在某种特定的条件下被设置
+				在我们数据为null的时候，有些数据库可能不能识别mybatis对null的默认处理，比如Oracle(报错)
+				Oracle:
+				JdbcType OTHER:无效的类型,因为MYBATIS所有的null映射的是原生Jdbc的OTHER类型，Oracle不能正确处理
+				JdbcType="NULL"
+				由于全局配置中，jdbcTypeForNull=OTHER,oracle不支持，两种方法
+				1、#{email,jdbcType=NULL}
+				2、jdbcTypeForNull=NULL
+					<setting name="jdbcTypeForNull" value="NULL"/>
+				mysql:
+				支持
+8、select 查询
+	1、返回list,返回集合只要在resultType中写集合的元素类型即可。
+	2、返回map,key就是列名，值就是值，一条记录时，resultType="map"
+		Map<String,Object>
+	3、返回多条记录时，resultType="cn.jun.employee"
+		Map<String,Employee>
+		方法上加上@MapKey("id"),将主键作为key
+	4、resultMap
+		1、<resultMap type=“” id="">
+				<!-- id主键 -->
+				<id column="id" property="id"/>
+				<!-- 普通列 -->
+				<result column="id" property="id"/>
+			</resultMap>
+		2、联合查询,
+		private Dept dept;
+		<resultMap type=“” id="">
+				<!-- id主键 -->
+				<id column="id" property="id"/>
+				<!-- 普通列 -->
+				<result column="id" property="id"/>
+				<result column="did" property="dept.id"/>
+			</resultMap>
+			
+			<resultMap type=“” id="">
+				<!-- id主键 -->
+				<id column="id" property="id"/>
+				<!-- 普通列
+					property:指定联合对象
+					javaType：指定java类型
+				-->
+				<result column="id" property="id"/>
+				<association property="dept" javaType="cn.jun.mybatis.bean.dept">
+				</association>
+			</resultMap>
+			
+			<resultMap type=“” id="">
+				<!-- id主键 -->
+				<id column="id" property="id"/>
+				<!-- 普通列
+					select:表明当前属性是调用select指定的方法查出的结果
+					
+					column：指定将哪一列的值传给这个方法
+					流程：使用select指定的方法（传入column指定的这列参数的值）查出对象，并封装给
+					property
+				-->
+				<result column="id" property="id"/>
+				<association property="dept" select="cn.jun.mybatis.mapper.DeptMapper.getDeptById" 
+				column="d_id">
+				</association>
+			</resultMap>
+			
+	5、可以使用延迟加载
+		配置全局文件：开启懒加载  true
+					  lazyLoadingEnable  true 
+					  aggressiveLazyLoading false
+					  
+		分段的时候加上上面2个配置
+	6、场景查询所有dept_id的员工。
+		<resultMap type=“” id="">
+				<!-- id主键 -->
+				<id column="id" property="id"/>
+				<!-- collection定义关联集合类型的属性的封装
+				ofType:指定集合里面的类型
+				-->
+				<result column="id" property="id"/>
+				<collection property="emps" ofType="cn.jun.bean.dept">
+				</collection>
+		</resultMap>
+	7、分2段查询
+		<resultMap type=“” id="">
+				<!-- id主键 -->
+				<id column="id" property="id"/>
+				<!-- collection定义关联集合类型的属性的封装
+				ofType:指定集合里面的类型
+				-->
+				<result column="id" property="id"/>
+				<collection property="emps" select="cn.jun.mybatis.mapper.DeptMapper" column="id">
+				</collection>
+		</resultMap>
+		
+		
+		扩展
+		<resultMap type=“” id="">
+				<!-- id主键 -->
+				<id column="id" property="id"/>
+				<!-- 
+					多字段，表示延迟加载
+					column="{dpetId=id,deptName=name}" fethchType="lazy"
+				-->
+				<result column="id" property="id"/>
+				<collection property="emps" select="cn.jun.mybatis.mapper.DeptMapper" column="{dpetId=id,}" fethchType="lazy">
+				</collection>
+		</resultMap>
+		
+		鉴别器
+		javaType 表示java类型，column表示判断的字段类别
+		<resultMap type=“” id="">
+				<!-- id主键 -->
+				<id column="id" property="id"/>
+				<!-- collection定义关联集合类型的属性的封装
+				ofType:指定集合里面的类型
+				-->
+				<result column="id" property="id"/>
+				<collection property="emps" select="cn.jun.mybatis.mapper.DeptMapper" column="id">
+				</collection>
+				
+				<discriminator javaType=""  column="">
+			<case value="0" resultType="cn.jun.mybatis.bean.Employee"/>
+				<association property="dept"
+				select="cn.jun.mybatis.mapper.DeptMapper.getDept"
+				column="d_id"/>
+			</case>
+			<case value="1" resultType="cn.jun.mybatis.bean.Employee"/>
+			</case>
+		</discriminator>
+		</resultMap>
+		
+9、动态sql dynamic SQL
+
+	注意：遇到特殊字符需要转义，OGNL取值
+	if ognl表达式
+	判断
+	choose(when,otherwise)
+	分支选择
+	trim(where,set)
+		where 1=1
+		where 只能解决前面的and 和 or
+		trim 能解决后面多的and 和 or
+			prefix：前缀，trim标签体中是整个字符串拼串
+				prefix给拼串后的结果
+			prefixOverrides:前缀覆盖，去掉整个字符串前面多余的字符
+			suffix:后缀，suffix给拼串后的整个i富川加一个后缀
+			suffixOverrides：后缀覆盖，去掉整个字符串后面多余的字符
+		<trim prefix="where" suffixOverrides="and">
+		</trim>
+		set
+			更新方法
+			处理多出来的
+			gender = #{gender},
+			也可以用<trim> 处理
+			
+			collection:指定遍历的集合
+			item:将当前遍历出的元素赋值给指定的变量
+			separator:每个元素之间的分隔符
+			open:遍历出所有结果集拼接一个开始的字符
+			#{变量名}就能取出变量的值也就是当前遍历的元素
+			close：遍历出所有结果拼接的字符
+			index:index是索引，item是当前值
+			遍历map的时候index表示的是map的key,item就是map的值
+	foreach
+		<foreach collection="ids" item="id">
+			#{id}
+		</foreach>
+		
+		批量查询
+		批量保存
+		mysql支持
+		separator=","
+		insert into () values ()
+		separator=";"
+		
+		oracle不支持
+		separator=","
+		oracle支持的批量方式
+			1、begin
+				；
+				；
+				end；
+			2、insert into xxx from select * from (中间表方式)
+		批量更新
+	
+	
+		
+		
+		
+		
+		
+			
+
+			
+				
+	

@@ -1,0 +1,236 @@
+1、svn亮点
+2、svn课程概述
+3、为什么使用svn
+	1、从个人开发到团队开发
+	2、ftp文件服务器（不行）
+4、版本控制工具的功能
+	1、协同修改
+	2、数据备份
+	3、增量式的版本管理
+	4、权限控制
+	5、历史记录
+5、svn工作机制
+	c/s结构
+	基本操作
+		1、检出 checkout,把服务端内容完整下载到本地
+		2、更新（update）
+			把服务器端对于本地的新的修改下载下来
+		3、提交（commit）
+6、服务器端环境搭建步骤
+	1、安装服务器端程序
+		yum install subversion 
+		yum install -y subversion 
+		验证安装：svn -version
+	2、创建并配置版本库
+		1、创建版本库目录
+		2、在版本库下创建项目目录
+		3、创建版本库命令
+			svnadmin create 目录
+			文件
+				conf目录：存版本库配置文件
+				db目录：数据库目录
+				hooks：钩子程序
+	3、配置svn对应的服务
+		1、端口号
+			默认是3690
+		2、指定版本库目录是具体项目的上一级目录
+			svn://192.168.140:3690/pro_oa
+			
+		3、svn服务：
+			名称：svnserve
+			默认是开启不启动的
+			开启命令百度
+			
+		4、修改配置文件
+			对应可执行脚本的路径
+				/etc/rc.d/init.d/svnserve
+				ps -ef|grep svnserve|grep -v grep
+				netstat -anp|grep svnserve
+				netstat -anp|grep :3690
+	4、启动svn服务
+	
+7、命令行客户端
+	1、创建两个工作区目录模拟两个开发人员
+	2、检出
+		作用：
+		命令：svn checkout svn://192.168.140:3690/pro_oa ./
+		svn checkout svn://192.168.140:3690/pro_oa  不指定目录会默认svn服务的目录
+		ls -lA 查看隐藏的目录
+		附加效果
+			在指定目录下创建.svn
+			保存本地目录和文件状态信息，用来和svn服务进行交互
+		工作副本
+			1、.svn所在的目录
+			2、版本控制相关操作都需要在工作副本目录下执行。例如：提交、更新等等
+			3、为了保证工作副本正常和服务器进行交互，不要修改副本内容
+	3、提交文件
+		1、svn要求提交文件前，先需要纳入版本控制体系
+		svn add 文件名
+		2、提交要求1：附加日志信息
+			svn commit -m "first commit" hello.txt
+		3、必须具有相应的权限
+		svnserve.conf
+		anon-access = write
+		
+		4、最后可以提交
+		svn commit -m "first commit" hello.txt
+		5、svn list svn://192.168.140:3690/pro_oa
+		可以看到提交的文件
+		
+	4、更新操作
+		更新是下载修改的内容
+	   命令:svn update 文件名
+	   
+8、冲突
+	1、过时的文件
+		概念：在一个相对服务器端版本本来说是旧版本的基础上进行了修改的文件
+		要求：所有过时的文件必须先执行更新操作，更新后在最新版本基础上修改的文件
+		才允许提交。
+	2、冲突产生
+		条件1：本地当前编辑的文件已经过时
+		条件2：服务端更新下来的修改和本地的修改发生在同一行
+	3、冲突的表现
+		产生3个文件
+		xx.mine  :发生冲突时本地文件内容
+		xx.r5[小版本号]：发生冲突前文件内容
+		xx.r6[大版本号]：发生冲突时服务器文件内容
+	4、冲突的手工解决
+		出先冲突,（p） 推迟
+		1、删除冲突发生是产生多余的三个文件
+		2、修改发生冲突的文件
+		3、再次提交文件
+		
+	5、冲突的半自动解决
+		e(编辑)
+		which vim  /usr/bin/vim
+		
+		1、设置环境变量
+		/etc/profile 
+		
+		SVN_EDITOR=/usr/bin/vim
+		export SVN_EDITOR
+		
+		验证echo $SVN_EDITOR
+		
+		进入编辑（e）,修改完后，已解决（r）标志已解决，再次提交
+	6、查看文件版本
+		svn info [file name]
+	7、减少冲突的发生
+		1、尽可能在修改文件前先进行更新操作，尽量在最新版本基础上修改文件内容。
+		2、尽量减少多人修改同一个文件的可能性。
+		3、加强团队成员之间的沟通。
+9、eclipse的SVN插件
+	1、简介
+		Subversive
+			Eclipse团队开发的SVN插件
+		Subclipse
+			Apache的SVN团队开发的Eclipse插件
+	2、subversive安装介绍
+	3、创建资源库位置
+	4、忽略文件处理
+		忽略特定文件的原因
+			1、在服务器上最终运行工程完全没有关系
+			2、开发团队中，并不是所有参与开发的成员都使用相同的IDE
+			3、svn的config文件 修改全局的global-ignores 
+				.settings */.settings/* *.classpath *.project
+	5、分享工程
+	6、对比上传情况
+	7、.svn是svn副本标志
+	8、图标含义介绍
+	9、在eclipse中检出工程
+		check out as project 
+		
+	10、转换工程的类型
+		convert to maven 
+		
+	11、eclipse基本操作
+	
+	12、eclipse解决冲突
+		1、更新
+		2、手动修改文件
+		3、标记为"已合并"
+		冲突文件-》右键->Team->Mark as merged
+		4、提交
+10、分支概念
+	1、概念：在版本控制过程中，使用多个分支同时推进多个不同功能开发。
+	不使用分支开发：人与人之间协作
+	使用分支开发：小组和小组之间协作
+	2、应用场景：
+		蓝色皮肤界面功能：小组1
+		用户账号管理功能：小组2 
+		支付功能：小组3
+		....
+	3、作用
+		1、多个功能开发起头并进同时进行
+		2、任何一个分支上功能开发失败，删除即可，不会对其他分支造成影响
+		
+	4、相关目录：
+		trunk：
+		主干
+		branches
+		分支
+		tags
+		存放项目开发过程中各个里程碑式的代码
+	创建相关目录
+	资源库位置-》右键-》New.. ->Floder
+	
+	5、创建trunk、branches、tags
+	 创建各个分支的具体目录
+	 项目-》Team->branch—》选中创建的目录
+	 
+	6、切换分支
+		右键-》Team-》switch--》选到具体的项目
+		
+	7、合并分支
+		Team merge
+		分支2合并到分支1，是以分支1为主体，将分支2合并过来
+11、svn权限管理
+	1、版本库中有三个配置文件
+		1、svnserve.conf
+			1、passwd 指定设置用户名密码的文件
+			2、authz分配权限的文件
+				[groups]
+					kaifa = jun,li
+			3、[/]针对版本库根目录进行权限设置
+			4、@kaifa = rw @组名 = 权限值
+			5、kate = r 用户名 = 权限值
+			6、* =  除了上面已经授权的用户以外其他用户没有任何权限
+	2、客户端测试
+		删除曾经登录过的用户
+	3、show history 
+		历史记录不可以看解决
+			到svnserver.conf文件中把anon-access注释打开设置为no
+			anon-access=none
+	4、回到某个历史状态
+		getContext
+		
+	5、TortoiseSVN乌龟客户端
+		1、icon set 图标介绍
+		2、settings 可以通过图形化界面找到
+		3、使用TortoiseSVN上传工程
+			svn服务器
+				空目录 --》 检出 --》 空目录/.svn mvn archetype:generate --> 工程目录结构 --》导入eclipse
+		4、针对archetype-catalog.xml文件的准备工作
+			下载地址
+				百度
+			赋值到Maven的本地仓库
+				Maven本地仓库根目录\org\apache\maven\archetype\archetype-catalog\[版本号目录]
+				
+		5、具体操作步骤
+			1、在服务器创建一个目录
+			2、mvn archetype:generate 命令参数
+			3、生成目录结构
+			4、导入eclipse import
+		6、基本操作
+			1、提交
+			2、更新
+			3、解决冲突
+12、总结
+			
+		
+	
+	
+	
+	
+	
+	
