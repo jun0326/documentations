@@ -5,5 +5,66 @@
 	4、empty()方法，return size() == 0;
 	5、search(Object object)方法，调用lastIndexOf(数组大小--)
 	
-2、LinkedList implements List<E>
-	1、addAll(Collection<? extends E>);通过遍历把所有的数据都放进链表节点中。
+2、LinkedList implements List<E>  可以存储null
+		包含一个私有化静态类
+		private statis class Node<E>{
+			E item;
+			Node<E> next;
+			Node<E> prev;
+			
+			Node(Node<E> prev,E element,Node<E> next){
+				this.item = element;
+				this.item = next;
+				this.prev = prev;
+			}
+		}
+	1、LinkedList addAll(Collection<? extends E>);通过遍历把所有的数据都放进链表节点中。
+	2、E getFirst(E) 获取第一个节点的值 f.item
+	3、E getLast(E) 获取到最后一个节点的值
+	4、E removeFirst() 删除第一个值，调用私有化方法unlinkFirst(Node<E> 处理，获取节点信息item,获取第个节点，f.next下一个节点保存到临时值，将f.itme,f.next置空，GC会回收。
+		把next放到first位置
+	5、E removeLast() 删除最后一个值，调用私有化方法unlinkLast<Node<E> 处理，节点也删除了
+	6、void addFirst(E) 增加到第一个节点，调用了私有化方法linkFirst(实现)，把E放进节点中的item
+	7、void addLast(E) 增加到最后一个节点，调用了私有化方法linkLast
+	8、boolean contains(Object); 调用indexOf(Object o)方法。
+		遍历节点的方式
+		for(Node<E> x = first; x != null; x = x.next){
+		}
+	9、size() 定义了一个size变量维护其大小
+	10、add() 默认是新增在最后，addLast(E);调用了私有化方法linkLast
+	11、Object remove(Object o)；返回 if o = x.item; 删除该节点，调用unlink并返回该item,返回boolean
+	12、addAll(Collection<? extends E>); 默认是增加在最后，返回值是boolean
+	13、addAll(int,Collection<? extends E>); 在index节点中增加，node(index)找到该节点位置
+	14、clear() void,清空所有元素，遍历把所有的节点和值都置空null,让gc处理。
+	15、get(int index) E,获取该节点下的item，checkElementIndex(index)检查该元素，调用node(index)获取该节点。
+	16、set(int index, E) E,改变该节点的值
+	17、add(int index, E) void，在该节点后面增加值
+	18、E remove(int index); 删除该节点的元素，调用unlink(Node<E> x)方法。
+	19、int indexOf(Object o); 返回值是int，默认是正向遍历
+	20、int lastIndexOf(Object o); 返回值是int，默认是反向遍历
+		for(Node<E> x = last; x != null; x = x.prev){
+			index--;
+			if(x.item == null){
+				return index;
+			}
+		}
+	21、peek(),获取第一个元素。
+	22、element(); 获取第一个元素。
+	23、poll(); 删除第一个节点
+	24、pollFirst(); 删除第一个节点
+	25、pollLast()删除最后一个节点
+	26、pop();删除第一个元素
+	27、push(); 增加在第一个节点
+	28、remove(); 默认删除第一个元素
+	29、removeFirst();
+	30、remveLast();
+	31、toArray() Object[];
+	32、toArray(T[]) T[]; 推荐使用 
+	33、listIterator();调用抽象接口的方法AbstractList，返回ListIterator
+		ListItr implements ListIterator<E>
+		LinkedList内部私有类ListItr implements ListIterator,当调用linkedList.listIterator();时
+		会初始化LinkedList内部类的
+		
+	
+	
+	
