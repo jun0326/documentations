@@ -1,0 +1,53 @@
+广州农商行绩效管理系统权限组织架构设计
+
+1、菜单配置控制
+	通过给用户授权角色，给角色授权配置菜单,一个用户可以有多个角色，一个角色可以有多个菜单
+	1、user 
+		1、userid
+	2、user_role
+		1、userid、roleid
+	3、role 
+		1、roleid
+	4、role_meun
+		1、roleid、meunid
+	5、meun
+		1、meunid、parent_meunid、roleid
+
+2、机构树控制
+	每个用户都会有直属机构
+	1、user
+		1、userid deptid
+	2、dept
+		deptid、parent_deptid、userid
+
+3、数据权限控制
+	新用户默认只能查询自己的数据，如果需要看其他数据，则需要通过给用户授权机构树下的所属机构,用sql控制数据权限
+	1、user
+		1、userid deptid
+	2、data_authority
+		1、userid deptid 
+		
+	# 数据到人,该用户能看到该机构授权的数据
+	select u.userid from user u, 
+	(select deptid from data_authority where userid = 3) d where u.deptid = d.deptid
+	union all
+	select 3 from dual;
+	
+	# 数据不到人，只到机构
+	select deptid from data_authority where userid = 3
+	
+	
+表数据
+	1、原始数据涉及到deptid
+	2、分配数据涉及到deptid userid
+	3、指标层（org层）数据涉及到deptid userid
+	
+
+广发证券企业客户信息管理系统组织架构设计
+1、菜单控制
+	通过给用户授权角色，一人只能有一个角色，一个角色可以给多个用户，角色控制菜单
+2、数据权限控制
+	通过角色控制，不展示菜单。
+3、审批权限
+	通过给用户授权审批权限
+

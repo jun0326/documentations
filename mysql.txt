@@ -556,6 +556,60 @@ SELECT * FROM DEPT_P WHERE DEPT_NAME LIKE '%研发%';
 1、#{}是经过预处理编译后，通过set方法给sql参数设值，${}是直接把参数拼接到sql中
 2、#{}可以防止sql注入，${}不能很好的防止sql注入，两者都可以使用时，建议使用#{}
 3、当sql中需要动态获取表或者动态获取排序字段时，可以使用${} 
+
+
+mysql建表语句
+CREATE TABLE USER(
+  user_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
+  user_name VARCHAR(255) NOT NULL COMMENT '用户名',
+  PASSWORD VARCHAR(255) NOT NULL COMMENT '密码',
+  phone VARCHAR(255) NOT NULL COMMENT '电话'
+) COMMENT '用户信息' ENGINE=INNODB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
+
+mysql 建表语句
+create table user (
+ userid bigint(10) not null primary key auto_increment comment '用户ID',
+ username varchar(255) not null comment '用户名',
+ mobile varchar(20) comment '手机号码',
+ password varchar(100) not null comment '密码',
+ status char(1) not null DEFAULT '0' comment '状态 0 正常 1 冻结 2 删除',
+ deptid bigint(10) not null comment '机构ID',
+ createtime timestamp NOT NULL comment '创建时间',
+ updatetime timestamp NOT NULL comment '更新时间'
+) comment '用户表';
+
+--查看数据是否开启大小写
+show Variables like '%table_names'
+
+--添加约束
+alter table data_authority add foreign key(userid) references user(userid);
+alter table data_authority add constraint fk_dataauth_userid  foreign key(userid) references user(userid);
+
+create table if not exists data_authority(
+ userid bigint(10) not null comment '用户ID',
+ deptid bigint(10) not null comment '机构ID',
+ foreign key(userid) references user(userid)
+) comment '数据权限维护表' engine=innodb default charset=utf8;
+
+
+create table if not exists data_authority(
+ userid bigint(10) not null comment '用户ID',
+ deptid bigint(10) not null comment '机构ID',
+ constraint fk_dataauth_userid foreign key(userid) references user(userid),
+ constraint fk_dataauth_deptid foreign key(deptid) references dept(deptid)
+) comment '数据权限维护表' engine=innodb default charset=utf8;
+
+--查询当前时间戳
+select CURRENT_TIMESTAMP from dual;
+--删除表字段
+alter table dept drop column userid;
+
+
+
+
+
+
+
 			
 
 	

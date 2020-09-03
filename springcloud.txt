@@ -112,6 +112,7 @@ CAP 强一致  高可用 分区容错性
 zookeeper和eureka区别
 zookeeper 保证CP master 垮掉后会进行leader选举，选举需要时间30s-120s
 EUREKA 保证AP 各个节点平等
+
 Eureka不会因为网络问题导致全部节点挂掉，会保持部分节点可用，zookeeper会导致全部节点挂掉
 针对整个淘宝网站，1111当天，选择AP实现
 
@@ -161,7 +162,9 @@ Feign集成了Ribbon
 通过feign只需要定义服务绑定接口且以声明方式的方法，优雅而简单的实现了服务调用
 （之前是Ribbon+RestTemplate）
 
+
 创建feign项目
+开启3个eureka,启动provider-dept-8001、provider-dept-8002、provider-dept-8003、启动feign
 
 修改api
 
@@ -222,13 +225,15 @@ aop面向编程  接口+注解处理
 hystrix还提供了准实时的调用监控，对微服务图形化监控
 
 新建hystrixdashboard工程
-8001/8002/8003都需要监控依赖配置  加入监控完善信息
+---8001/8002/8003都需要监控依赖配置  加入监控完善信息  集群需要配置
 启动 hystrixdashboard 访问该服务
 http://localhost:9001/hystrix
 
 启动三个er  启动dept-hystrix-8001 启动 hystrixdashboard
 
 localhost:8001/hystrix.stream
+
+http://localhost:9001/hystrix.stream
 
 一圈：绿色 --》 红色
 一线
@@ -252,6 +257,8 @@ hosts修改  myzuul.com
 一个服务提供类8001
 一个路由
 访问路由：http://myzuul.com:9527/microservicecloud-dept/dept/get/2
+
+http://myzuul.com:9527/jun/mydept/dept/get/2
 
 修改hosts127.0.0.1 myzuul.com
 
@@ -397,6 +404,60 @@ zuul包含了对请求的路由和过滤两个最主要的功能
 
 
 springcloud config 分布式配置中心
+
+---------------------------------
+微服务springcloud使用总结
+
+eureka 
+主要负责微服务的服务治理，分为服务端和客户端，服务端主要提供一个注册中心，客户端是生产者会到注册中心注册服务，并且提供注册后的服务给消费者使用。
+三大角色：
+注册服务器、注册生产者、注册消费者
+细节点：
+服务注册中心
+	1、失效剔除eureka server在启动的时候会创建一个定时任务，默认每隔一段时间
+	（默认为60秒）将当前清单中超时（默认为90秒）没有续约的服务剔除出去。
+	2、自我保护
+		1、产生的原因：保护特性主要用于减少在网络分区或者不稳定状况下的不一致问题,Eureka Server在运行期间会统计心跳失败的比例在15分钟以之内是否低于85%，
+		如果出现低于的情况，Eureka Server会将当前实例注册信息保护起来,自我保护的作用是让这些服务不会被失效剔除。
+	3、CPA理解
+		1、P（分区容错性）：当一个分布式服务发生网络分区问题时，任然可以对外正常提供服务。
+		2、C（强一致性）：对于读和写的任意一个操作，都能返回最新的数据结果。
+		3、A（高可用性）：对于读取集群中的任意一个节点，会返回一个合理的结果（值），有可能正确，也有可能不正确（但是不能时超时或者报错）。
+		
+	4、eureka和zookeeper的区别
+		1、eureka是对等复制，zookeeper是主从复制，eureka每个节点是平等的，都可以读写操作，zookeeper读写是在master节点中进行，当master节点挂掉时，会重新
+		选举一个新节点，选举时间需要30s-120s,zookeeper可能会因为网络问题导致所有节点挂掉,eureka是每个节点都可以提供服务。
+		2、eureka是每一个节点都可以读写，可以保证其高可用性，如果一个节点挂掉，可能导致部分数据暂时丢失，服务恢复后可以重新更新到数据，zookeeper只有master节点
+		才能够进行读写，可以保证数据的强一致性。
+	
+ribbon
+	只要在微服务中负责负载均衡，默认使用轮询策略，可以自定义负载均衡策略。自定义负载均衡策略需要继承AbstractLoadBalancerRule抽象类。
+	如果有项目自定义了规则，则优先使用项目自定义规则
+	@Configuration
+	public class MySelfRule {
+		@Bean
+		public IRule myRule(){
+			return new RandomRule_ZY();// 我自定义为每台机器5次
+		}
+	}
+
+feign
+	主要是通过注解+接口的方式调用微服务，内嵌了ribbon了的轮询算法
+	@FeignClient(value = "MICROSERVICECLOUD-DEPT")
+	
+hystrix
+	断路器，主要用来处理服务熔断的，处理方式是在服务生产者发生报错异常时，返回一个异常数据响应
+	
+	服务熔断和服务降级区别：
+		1、触发的原因不一样，服务熔断是一个微服务链条的调用，当其中一个微服务不能使用时，会造成前面微服务请求的拥堵，从而造成整个服务雪崩。
+		服务降级是是指服务器压力剧增的情况下，选择性的关掉一些服务，在服务消费者中直接返回一个异常提示页面。
+
+hystrixDashboard
+	对微服务进行图形化监控策略，需要在生产服务端加入hystrix监控依赖
+
+zuul
+	主要提供 代理+路由+过滤三大功能
+	zuul也是需要注册到eureka的
 
 
 
