@@ -64,7 +64,42 @@
 		ListItr implements ListIterator<E>
 		LinkedList内部私有类ListItr implements ListIterator,当调用linkedList.listIterator();时
 		会初始化LinkedList内部类的
-		
+
+3、ArrayList implements List<E>
+	1、new ArrayList(); 初始化一个空的数组
+	2、new ArrayList(int i); 初始化成一个i大的数组
+	3、new ArrayList(Collection<? extends E>) toArray返回的实例对象并不一定是Object[], 因为？并不一定是Object[]
+	4、void timeToSize(); 把预留的空间元素去掉
+	5、int size(); 返回大小 return size
+	6、boolean isEmpty(); return size == 0
+	7、boolean contains(Object o); return indexOf(o) >=0;  采取遍历的方式处理每一个元素
+	8、int indexOf(Object o); 采用遍历的方式，如果没有则 return -1;
+	9、int lastIndexOf(Object o); 采用遍历的方式，反向遍历。
+	10、Object clone(); 复制集合
+	11、Object[] toArray(); 返回一个Object数组。
+	12、T[] toArray(T[] t); 传入一个数组类型，则返回该数组类型。
+	13、E get(int index); elementData(int index); 返回集合中的一个元素
+	14、E set(int index); 获取旧值，再该索引位置加入该值，返回就值
+	15、boolean add(E)，如果数组大小为0，则默认给10个数的大小，数组的最小值事size()+1,如果不为零则判断现在的剩余的位置是否够用，
+		如果不够用则扩容到旧数组大小的1.5倍，如果扩容后的值还小于最小值，则新数组的大小等于最小值
+		<<   :  左移运算符，num << 1,相当于num乘以2
+		>>   :  右移运算符，num >> 1,相当于num除以2
+		>>>  :  无符号右移，忽略符号位，空位都以0补齐
+	16、void add(int index,E);在相应的位置增加一个元素
+	17、E remove(int index);删除一个指定的元素，位置要移动
+	18、boolean remove(Object o); 删除指定的元素，位置要移动
+	19、void clear(); size = 0; 遍历array[i] = null
+	20、boolean addAll(Collection<? extends E>); 位置需要移动
+	21、boolean addAll(int index, Collection<? extends E>); 
+	22、boolean removeAll(Collection<?>);移除原先元素中包含到的元素
+	23、boolean retainAll(Collection<?>);移除现在
+	24、ListIterator listIterator(int index);从第几个索引获取迭代器
+	25、ListIterator<E> listIterator(); 从第0个索引获取迭代器
+	26、Iterator<E> iterator()； 获取普通集合的迭代器
+	27、subList(int，int);
+		  return new SubList(this, 0, fromIndex, toIndex);
+	28、forEach(Consumer<? super E> action); landom遍历
+	29、sort(Compaeator<? super E>); 排序
 	
 	
 	

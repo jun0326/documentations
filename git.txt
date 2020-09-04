@@ -301,6 +301,28 @@
 	2、linux 安装 gitlab
 	3、浏览器访问gitlab
 	
+21、ssh使用
+	1、配置全局user name and email 
+		git config --global --list
+	2、检查ssh key是否存在
+		cd ~/.ssh
+		ls
+		或者
+		ll
+		//看是否存在 id_rsa 和 id_rsa.pub文件，如果存在，说明已经有SSH Key
+	3、如果没有ssh key,则需要生成一下
+		ssh-keygen -t rsa -C "15766228041@163.com"
+	4、打开id_rsa.pub
+		拷贝密匙 ssh-rsa开头
+	5、进入github.com设置settings
+		新建一个ssh key
+	6、验证ssh key是否配置成功
+		ssh -T git@github.com
+		//运行结果出现类似如下
+		Hi jun0326! You've successfully authenticated, but GitHub does not provide shell access.
+
+		
+
 	
 	
 		
