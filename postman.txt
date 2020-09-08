@@ -1,0 +1,5 @@
+postman并不能进行压测，runner其实是阻塞方法，依次发送请求
+1、注册一个账号
+2、创建一个collections,创建一个floder
+3、创建post请求和get请求，把post、get请求保存到floder
+4、run进行测压操作

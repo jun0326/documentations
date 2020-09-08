@@ -603,6 +603,7 @@ create table if not exists data_authority(
 select CURRENT_TIMESTAMP from dual;
 --删除表字段
 alter table dept drop column userid;
+--增加复合主键
 
 
 
