@@ -1,0 +1,38 @@
+框架服务架构
+	1、udian-cloud-clients 服务接口
+		1、udian-cloud-bpm-client  --工作流接口
+		2、udian-cloud-file-client 
+		3、udian-cloud-msg-client   --消息服务接口
+		4、udian-cloud-task-client 
+	2、udian-cloud-components --应用组件模块
+		1、udian-cloud-common-core --系统开发集成核心包
+		2、udian-cloud-common-starter --系统开发集成starter 包含了基本的配置
+		3、udian-cloud-java-sdk 
+		4、udian-cloud-tenant-starter 
+	3、udian-cloud-platform --平台服务模块
+		1、udian-cloud-api-spring-server --开放api服务模块 (prot=8888)
+		2、udian-cloud-api-zuul-server --api开放网关(基于zuul),推荐使用(port=8888)
+		3、udian-cloud-base-client --平台基础服务接口
+		4、udian-cloud-base-server --平台基础服务（port=8233）
+		5、udian-cloud-generator-server
+		6、udian-cloud-uaa-admin-server 
+		7、udian-cloud-uaa-portal-server 
+	4、udian-cloud-services
+		1、udian-cloud-bpm-server
+		2、udian-cloud-file-server
+		3、udian-cloud-msg-server
+		4、udian-cloud-sba-server
+		5、udian-cloud-sso-ui-demo
+		6、udian-cloud-task-server
+		7、udian-cloud-tenant-demo
+	5、udian-cloud-tests
+		udian-cloud-base-test
+		
+java为什么有三成设计vo、dto、po对象
+vo:view object 就是用在界面显示的对象
+dto：data transfer object数据传输对象，一般用在代码中对数据进行处理。 展示层与服务层之间的数据传输对象。
+do: domain object 领域对象，就是从现实世界中抽象出来的有形或无形的业务实体。
+po:persistent object 数据库持久化对象，刚才数据库查询出来的对象就是po，通常是映射关系型数据库的数据结构。
+
+VO ===> DTO ===> DO ===> PO
+	
