@@ -1,0 +1,19 @@
+window下安装
+1、下载安装
+	1、先下载安装erlang,因为rabbitmq是erlang语言编写的
+		下载：http://www.erlang.org/download/otp_win64_17.3.exe
+		安装：直接next
+	2、再下载安装rabbitmq
+		下载：官网下载
+		安装：直接next
+	3、最后下载插件
+		1、cmd进入sbin页面
+		2、执行rabbitmq-plugins enable rabbitmq_management，生成启动、停止图形化插件
+	4、启动rabbitmq-services start,rabbit-service stop
+	5、访问地址：http://127.0.0.1:15672/#/
+	6、默认账号和密码：guest/guest
+	7、可以自己添加用户并授权后才可以与项目进行整合，设置用户tag是administrator/managem	ent才可以登录，需要授权后才能和项目连接
+		和springboot整合默认端口是5672
+		
+		
+			

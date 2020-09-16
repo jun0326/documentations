@@ -320,6 +320,10 @@
 		ssh -T git@github.com
 		//运行结果出现类似如下
 		Hi jun0326! You've successfully authenticated, but GitHub does not provide shell access.
+		
+22、idea设置
+	IDEA 打开或导入项目出现的问题： *.is registered as a Git root, but no Git repositories were found there.
+	settings --> version contronl -->删除掉不需要的
 
 		
 

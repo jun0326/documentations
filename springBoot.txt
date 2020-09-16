@@ -285,6 +285,35 @@ springBoot微服务开发开发环境搭建
 	用到的注解
 	@RunWith(SpringJUnit4ClassRunner.class)	指定测试类
 	@SpringBootTest(classes = SpringApplicationStart.class) 指定开启的启动类，如果不需要使用到上面的jar包，也可以不启动
+	
+	@RunWith(SpringRunner.class)
+	@SpringBootTest
+5、整合redis
+	1、pom.xml配置启动器
+		!--添加redis启动器-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+	2、application.yml加入配置
+		 #配置redis连接信息
+		 spring:
+		  redis:
+		  host: 127.0.0.1
+		  port: 6379
+		  password:
+			  jedis:
+				pool:
+				  max-active: 8
+				  max-wait: -1
+				  max-idle: 500
+				  min-idle: 0
+			  lettuce:
+				shutdown-timeout: 0
+	3、使用RedisTemplate模板使用操作redis
+	 authCheckUtils.redisTemplate.opsForValue().set(sign.getAppid(),sign.getSignature());
+		
+		
 		
 	
 

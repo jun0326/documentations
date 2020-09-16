@@ -1,0 +1,23 @@
+安装：
+官网下载，解压zip文件，启动即可
+启动：bin/startup.cmd 双击
+
+未做配置修改：
+nacos1.3.2（Aug 4, 2020）启动报错:db.num is null
+
+原因以及解决方案：
+原因：下载下来的nacos-server使用的时cluster集群模式，这个模式是要求使用mysql的。
+解决办法：（实验环境下将 nacos-server的启动方式改为单例就行了。
+右键编辑：startup.cmd
+设置为：
+将set MODE="cluster" 设置为 set MODE="standalone" 就行了。
+
+如果是生产环境参考
+https://blog.csdn.net/A564492203/article/details/107815933 
+配置mysql
+
+访问路径：http://localhost:8848/nacos
+
+默认账号和密码：
+账号：nacos
+密码：nacos
